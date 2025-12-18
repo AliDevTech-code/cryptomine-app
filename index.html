@@ -275,7 +275,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
+            padding: 11px 16px;
             border-radius: 12px;
             color: var(--text-secondary);
             cursor: pointer;
@@ -321,7 +321,7 @@
 
         .balance-card {
             position: absolute;
-            bottom: 24px;
+            bottom: 14px;
             left: 24px;
             right: 24px;
             background: rgba(21, 28, 44, 0.6);
@@ -1652,15 +1652,14 @@
                 </div>
             </nav>
 
-            <div class="user-info">
-                <div class="user-email" id="userEmail">user@example.com</div>
-            </div>
+            
 
             <div class="balance-card">
+                <div class="balance-change" id="todayEarnings">$0.00 today</div>
                 <div class="balance-label">Current Balance</div>
                 <div class="balance-amount" id="currentBalance">$0.00</div>
-                <div class="balance-change" id="todayEarnings">$0.00 today</div>
-                <div class="balance-change">Active User</div>
+                   <div class="user-email" id="userEmail">user@example.com</div>
+                
             </div>
         </aside>
 
@@ -1721,7 +1720,7 @@
                             <div class="card-icon"><i class="fas fa-bolt"></i></div>
                             <div>
                                 <div class="card-title">Daily Mining Progress</div>
-                                <div class="card-subtitle">No active mining plans</div>
+                                
                             </div>
                         </div>
 
@@ -1804,7 +1803,7 @@
                         <div class="address-box">
                             <div class="address-label">Deposit Address</div>
                             <div class="address-content">
-                                <code class="address-text" id="usdtAddress">TYourUSDTAddressHere123456789ABCDEFG</code>
+                                <code class="address-text" id="usdtAddress">TNKvCepFYBZKdPdhkVU4eDfi25fnV73bDY</code>
                                 <button class="copy-btn" onclick="copyAddress()"><i class="fas fa-copy"></i></button>
                             </div>
                         </div>
@@ -1815,7 +1814,7 @@
                                 <div class="warning-title">Important</div>
                                 <ul class="warning-list">
                                     <li>• Only send USDT (TRC20) to this address</li>
-                                    <li>• Minimum deposit: $50 USDT</li>
+                                    <li>• Minimum deposit: $5 USDT</li>
                                     <li>• Deposits are credited after admin approval</li>
                                 </ul>
                             </div>
@@ -1827,7 +1826,7 @@
 
                         <div class="form-group">
                             <label class="form-label">Amount (USDT)</label>
-                            <input type="number" class="form-input" placeholder="Enter deposit amount" id="depositAmount" min="50">
+                            <input type="number" class="form-input" placeholder="Enter deposit amount" id="depositAmount" min="5">
                         </div>
 
                         <div class="form-group">
@@ -1885,10 +1884,10 @@
                         <div class="form-group">
                             <label class="form-label">Amount (USDT)</label>
                             <div class="input-with-btn">
-                                <input type="number" class="form-input" placeholder="Enter withdrawal amount" id="withdrawAmount" min="20">
+                                <input type="number" class="form-input" placeholder="Enter withdrawal amount" id="withdrawAmount" min="5">
                                 <button class="input-max-btn" onclick="setMaxWithdraw()">MAX</button>
                             </div>
-                            <div class="input-hint">Minimum: $20 USDT</div>
+                            <div class="input-hint">Minimum: $5 USDT</div>
                         </div>
 
                         <div class="summary-box">
@@ -2953,9 +2952,9 @@
         showToast('Please enter your USDT address', 'error');
         return;
     }
-    
-    if (!amount || isNaN(amount) || amount < 20) {
-        showToast('Minimum withdrawal is $20 USDT', 'error');
+
+    if (!amount || isNaN(amount) || amount < 5) {
+        showToast('Minimum withdrawal is $5 USDT', 'error');
         return;
     }
     
