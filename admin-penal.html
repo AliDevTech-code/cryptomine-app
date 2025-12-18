@@ -776,10 +776,60 @@ html {
                 color: var(--text-primary);
             }
         }
+            /* Custom Scrollbar for Whole Page */
+html {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: var(--border) var(--bg-secondary); /* For Firefox */
+}
+
+/* For Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* For specific elements that need custom scrollbar */
+.admin-sidebar::-webkit-scrollbar,
+.modal::-webkit-scrollbar,
+.admin-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track,
+.modal::-webkit-scrollbar-track,
+.admin-table-container::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb,
+.modal::-webkit-scrollbar-thumb,
+.admin-table-container::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover,
+.modal::-webkit-scrollbar-thumb:hover,
+.admin-table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+}
     </style>
 </head>
 <body>
-    <!-- Admin Login -->
+   <!-- Admin Login -->
     <div class="admin-auth" id="adminAuth">
         <div class="admin-box">
             <div class="admin-header">
@@ -794,12 +844,12 @@ html {
 
             <div class="form-group">
                 <label class="form-label">Admin Email</label>
-                <input type="email" class="form-input" id="adminEmail" placeholder="admin@cryptomine.app" value="admin@cryptomine.app">
+                <input type="email" class="form-input" id="adminEmail" placeholder="*******" value="">
             </div>
 
             <div class="form-group">
                 <label class="form-label">Password</label>
-                <input type="password" class="form-input" id="adminPassword" placeholder="Enter password" value="admin123">
+                <input type="password" class="form-input" id="adminPassword" placeholder="Enter password" value="">
             </div>
 
             <button class="btn btn-primary" onclick="adminLogin()">
@@ -3744,3 +3794,4 @@ const dailyEarnings = planPrice * (totalDailyReturn / 100);
 </body>
 
 </html>
+
