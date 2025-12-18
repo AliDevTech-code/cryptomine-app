@@ -1,0 +1,3422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoMine - Mining Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #151c2c;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #2dd4bf;
+            --accent-glow: rgba(45, 212, 191, 0.3);
+            --info: #3b82f6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #1e293b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Auth Pages */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(21, 28, 44, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .auth-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .auth-logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .auth-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .auth-tab.active {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .referral-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .auth-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .auth-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Main App (Hidden by default) */
+        .main-app {
+            display: none;
+        }
+
+        .main-app.active {
+            display: block;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: rgba(21, 28, 44, 0.5);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .user-info {
+            position: absolute;
+            bottom: 128px;
+            left: 24px;
+            right: 24px;
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .balance-card {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .balance-change {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 4px;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(45, 212, 191, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        .stat-badge {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .stat-badge.positive {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .stat-badge.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--warning);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Circle */
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-circle {
+            position: relative;
+            width: 192px;
+            height: 192px;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle .bg {
+            fill: none;
+            stroke: var(--bg-secondary);
+            stroke-width: 8;
+        }
+
+        .progress-circle .progress {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-value {
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Countdown */
+        .countdown-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-value {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 60px;
+        }
+
+        .countdown-unit {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .earnings-box {
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .earnings-amount {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Transactions */
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            border-radius: 12px;
+            transition: background 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .transaction-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .transaction-icon.earning {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+        }
+
+        .transaction-icon.deposit {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-icon.withdraw {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-weight: 500;
+        }
+
+        .transaction-time {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .transaction-amount.positive {
+            color: var(--success);
+        }
+
+        .transaction-amount.negative {
+            color: var(--danger);
+        }
+
+        /* Plans Page */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .plan-card {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .plan-card.popular {
+            border: 2px solid transparent;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                        linear-gradient(135deg, var(--accent), var(--info)) border-box;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .plan-name {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .plan-price-value {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .plan-price-unit {
+            color: var(--text-secondary);
+        }
+
+        .plan-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .plan-stat {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .plan-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .plan-stat-value.green {
+            color: var(--success);
+        }
+
+        .plan-stat-value.orange {
+            color: var(--warning);
+        }
+
+        .plan-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .plan-total {
+            background: rgba(45, 212, 191, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .plan-total-label {
+            color: var(--text-secondary);
+        }
+
+        .plan-total-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .plan-features {
+            margin-bottom: 24px;
+        }
+
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .plan-feature-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        .plan-feature-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            color: var(--bg-primary);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(45, 212, 191, 0.5);
+        }
+
+        .btn-outline:hover {
+            background: rgba(45, 212, 191, 0.1);
+            border-color: var(--accent);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        /* Deposit Page */
+        .deposit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .deposit-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .qr-container {
+            width: 192px;
+            height: 192px;
+            background: var(--text-primary);
+            border-radius: 16px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .qr-placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            padding: 8px;
+        }
+
+        .qr-cell {
+            background: var(--text-primary);
+            border-radius: 2px;
+        }
+
+        .address-box {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .address-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .address-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .address-text {
+            flex: 1;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-card);
+            color: var(--accent);
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .warning-icon {
+            color: var(--warning);
+            font-size: 20px;
+        }
+
+        .warning-title {
+            color: var(--warning);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .warning-list {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .warning-list li {
+            margin-bottom: 4px;
+        }
+
+        /* Input with btn */
+        .input-with-btn {
+            position: relative;
+        }
+
+        .input-with-btn .form-input {
+            padding-right: 70px;
+        }
+
+        .input-max-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+        }
+
+        .summary-value.accent {
+            color: var(--accent);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-icon {
+            color: var(--info);
+            font-size: 20px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* History Items */
+        .history-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-amount {
+            font-weight: 600;
+        }
+
+        .history-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-status.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .history-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .history-status.rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .history-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Invite Page */
+        .invite-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .invite-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .invite-stat {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .invite-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 12px;
+        }
+
+        .invite-stat-icon.primary {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+        }
+
+        .invite-stat-icon.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .invite-stat-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .invite-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .invite-stat-value.success {
+            color: var(--success);
+        }
+
+        .invite-stat-value.warning {
+            color: var(--warning);
+        }
+
+        .invite-stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .share-icon-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .how-it-works {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .how-it-works-title {
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: rgba(45, 212, 191, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Referral Item */
+        .referral-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .referral-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .referral-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .referral-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(45, 212, 191, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .referral-name {
+            font-weight: 500;
+        }
+
+        .referral-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .referral-status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .referral-status.inactive {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .referral-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .referral-date {
+            color: var(--text-secondary);
+        }
+
+        .referral-earned {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 200;
+            width: 40px;
+            height: 40px;
+            background: rgba(21, 28, 44, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 15, 26, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Mining History Page */
+        .history-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+       /* Mining History Page Additional Styles */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th {
+    text-align: left;
+    padding: 16px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    background: rgba(21, 28, 44, 0.6);
+}
+
+.history-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+.history-table tr:hover {
+    background: rgba(45, 212, 191, 0.05);
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Filter Buttons Active State */
+.filter-btn.active {
+    background: rgba(45, 212, 191, 0.1);
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
+}
+
+/* Type Icons */
+.type-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-approved {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* Amount Colors */
+.amount-positive {
+    color: var(--success);
+}
+
+.amount-negative {
+    color: var(--danger);
+}
+
+.amount-neutral {
+    color: var(--warning);
+}
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 80px 16px 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .deposit-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-box {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Container -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon"><i class="fas fa-cube"></i></div>
+                    <span class="auth-logo-text">CryptoMine</span>
+                </div>
+                <h2 class="auth-title">Welcome to CryptoMine</h2>
+                <p class="auth-subtitle">Start mining crypto and earn daily rewards</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="showAuthForm('login')">Login</div>
+                <div class="auth-tab" onclick="showAuthForm('signup')">Sign Up</div>
+            </div>
+
+            <!-- Login Form -->
+            <div class="auth-form active" id="loginForm">
+                <div class="error-message" id="loginError"></div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button class="auth-btn" onclick="login()">
+                    <span id="loginBtnText">Login</span>
+                    <span class="spinner" id="loginSpinner" style="display: none;"></span>
+                </button>
+                <div class="auth-links">
+                    <span class="auth-link" onclick="showAuthForm('forgot')">Forgot Password?</span>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-form" id="signupForm">
+                <div class="error-message" id="signupError"></div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" id="signupConfirmPassword" placeholder="Confirm password" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Referral Code (Optional)</label>
+                    <input type="text" class="form-input" id="signupReferral" placeholder="Enter referral code">
+                    <div class="referral-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Get bonus when using referral code</span>
+                    </div>
+                </div>
+                <button class="auth-btn" onclick="signup()">
+                    <span id="signupBtnText">Create Account</span>
+                    <span class="spinner" id="signupSpinner" style="display: none;"></span>
+                </button>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div class="auth-form" id="forgotForm">
+                <div class="error-message" id="forgotError"></div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="forgotEmail" placeholder="Enter your email" required>
+                </div>
+                <button class="auth-btn" onclick="forgotPassword()">
+                    <span id="forgotBtnText">Reset Password</span>
+                    <span class="spinner" id="forgotSpinner" style="display: none;"></span>
+                </button>
+                <div class="auth-links">
+                    <span class="auth-link" onclick="showAuthForm('login')">Back to Login</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (Initially Hidden) -->
+    <div class="main-app" id="mainApp">
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Overlay -->
+        <div class="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-cube"></i></div>
+                <span class="logo-text">CryptoMine</span>
+            </div>
+
+            <nav>
+                  <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')">
+                    <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-page="deposit" onclick="showPage('deposit')">
+                    <span class="nav-icon"><i class="fas fa-wallet"></i></span>
+                    <span>Deposit</span>
+                </div>
+                <div class="nav-item active" data-page="plans" onclick="showPage('plans')">
+                    <span class="nav-icon"><i class="fas fa-cubes"></i></span>
+                    <span>Mining Plans</span>
+                </div>
+                <div class="nav-item" data-page="withdraw" onclick="showPage('withdraw')">
+                    <span class="nav-icon"><i class="fas fa-money-bill-wave"></i></span>
+                    <span>Withdraw</span>
+                </div>
+                <div class="nav-item" data-page="mining-history" onclick="showPage('mining-history')">
+                    <span class="nav-icon"><i class="fas fa-history"></i></span>
+                    <span>Mining History</span>
+                </div>
+                <div class="nav-item" data-page="invite" onclick="showPage('invite')">
+                    <span class="nav-icon"><i class="fas fa-user-friends"></i></span>
+                    <span>Invite Friends</span>
+                </div>
+                <div class="nav-item" onclick="logout()">
+                    <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span>Logout</span>
+                </div>
+            </nav>
+
+            <div class="user-info">
+                <div class="user-email" id="userEmail">user@example.com</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-label">Current Balance</div>
+                <div class="balance-amount" id="currentBalance">$0.00</div>
+                <div class="balance-change" id="todayEarnings">$0.00 today</div>
+                <div class="balance-change">Active User</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Plans Page -->
+            <section class="page active" id="plans">
+                <h1 class="page-title">Mining Plans</h1>
+                <p class="page-subtitle">Choose a plan that suits your investment goals.</p>
+
+                <div class="plans-grid" id="plansContainer">
+                    <!-- Plans will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Dashboard Page -->
+            <section class="page" id="dashboard">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Welcome back! Here's your mining overview.</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <span class="stat-badge" id="balanceChange">0%</span>
+                        </div>
+                        <div class="stat-label">Total Balance</div>
+                        <div class="stat-value" id="totalBalance">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-cubes"></i></div>
+                        </div>
+                        <div class="stat-label">Active Plans</div>
+                        <div class="stat-value" id="activePlans">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <span class="stat-badge" id="dailyEarningBadge">$0.00 today</span>
+                        </div>
+                        <div class="stat-label">Total Earnings</div>
+                        <div class="stat-value" id="totalEarnings">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <span class="stat-badge" id="referralChange">0 this week</span>
+                        </div>
+                        <div class="stat-label">Referrals</div>
+                        <div class="stat-value" id="totalReferrals">0</div>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                            <div>
+                                <div class="card-title">Daily Mining Progress</div>
+                                <div class="card-subtitle">No active mining plans</div>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-circle">
+                                <svg width="192" height="192">
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#2dd4bf"/>
+                                            <stop offset="100%" stop-color="#3b82f6"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <circle class="bg" cx="96" cy="96" r="88"/>
+                                    <circle class="progress" cx="96" cy="96" r="88" 
+                                        stroke-dasharray="0 553" id="progressCircle"/>
+                                </svg>
+                                <div class="progress-text">
+                                    <div class="progress-value" id="progressValue">0%</div>
+                                    <div class="progress-label">Complete</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="countdown-label">
+                            <span><i class="fas fa-clock"></i></span>
+                            <span>Purchase a plan to start mining</span>
+                        </div>
+
+                        <div class="countdown">
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="hours">00</div>
+                                <div class="countdown-unit">Hours</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="minutes">00</div>
+                                <div class="countdown-unit">Min</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="seconds">00</div>
+                                <div class="countdown-unit">Sec</div>
+                            </div>
+                        </div>
+
+                        <div class="earnings-box">
+                            <span class="earnings-amount" id="expectedEarnings">$0.00</span>
+                            <span> expected earnings today</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title" style="margin-bottom: 24px;">Recent Transactions</h3>
+                        <div id="recentTransactions">
+                            <div class="info-box">
+                                <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                                <span class="info-text">No transactions yet. Make your first deposit to get started.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deposit Page -->
+            <section class="page" id="deposit">
+                <h1 class="page-title">Deposit</h1>
+                <p class="page-subtitle">Fund your account with USDT to start mining.</p>
+
+                <div class="deposit-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: rgba(45, 212, 191, 0.1); color: var(--accent);"><i class="fas fa-qrcode"></i></div>
+                            <div>
+                                <div class="card-title">USDT Deposit Address (TRC20)</div>
+                            </div>
+                        </div>
+
+                        <div class="qr-container">
+                            <div class="qr-placeholder" id="qrCode"></div>
+                        </div>
+
+                        <div class="address-box">
+                            <div class="address-label">Deposit Address</div>
+                            <div class="address-content">
+                                <code class="address-text" id="usdtAddress">TYourUSDTAddressHere123456789ABCDEFG</code>
+                                <button class="copy-btn" onclick="copyAddress()"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <span class="warning-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                            <div>
+                                <div class="warning-title">Important</div>
+                                <ul class="warning-list">
+                                    <li>• Only send USDT (TRC20) to this address</li>
+                                    <li>• Minimum deposit: $50 USDT</li>
+                                    <li>• Deposits are credited after admin approval</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title" style="margin-bottom: 24px;">Request Deposit</h3>
+
+                        <div class="form-group">
+                            <label class="form-label">Amount (USDT)</label>
+                            <input type="number" class="form-input" placeholder="Enter deposit amount" id="depositAmount" min="50">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Transaction Hash</label>
+                            <input type="text" class="form-input" placeholder="Enter transaction hash" id="depositHash" required>
+                        </div>
+
+                        <div class="info-box">
+                            <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                            <span class="info-text">After sending USDT, enter the transaction hash here. Your deposit will be verified and approved by admin.</span>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="requestDeposit()">
+                            <i class="fas fa-paper-plane"></i> Submit Deposit Request
+                        </button>
+
+                        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                            <h4 style="font-weight: 500; margin-bottom: 16px;">Deposit History</h4>
+                            <div id="depositHistory">
+                                <div class="info-box">
+                                    <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                                    <span class="info-text">No deposit history found.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Withdraw Page -->
+            <section class="page" id="withdraw">
+                <h1 class="page-title">Withdraw</h1>
+                <p class="page-subtitle">Withdraw your earnings to your USDT wallet.</p>
+
+                <div class="deposit-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: rgba(45, 212, 191, 0.1); color: var(--accent);"><i class="fas fa-coins"></i></div>
+                            <div>
+                                <div class="card-title">Request Withdrawal</div>
+                                <div class="card-subtitle">Withdraw to TRC20 address</div>
+                            </div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(59, 130, 246, 0.1)); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">Available Balance</div>
+                            <div style="font-size: 32px; font-weight: 700; color: var(--accent);" id="availableBalance">$0.00</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">USDT Address (TRC20)</label>
+                            <input type="text" class="form-input" placeholder="Enter your USDT wallet address" id="withdrawAddress">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Amount (USDT)</label>
+                            <div class="input-with-btn">
+                                <input type="number" class="form-input" placeholder="Enter withdrawal amount" id="withdrawAmount" min="20">
+                                <button class="input-max-btn" onclick="setMaxWithdraw()">MAX</button>
+                            </div>
+                            <div class="input-hint">Minimum: $20 USDT</div>
+                        </div>
+
+                        <div class="summary-box">
+                            <div class="summary-row">
+                                <span class="summary-label">Amount</span>
+                                <span id="withdrawSummaryAmount">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Fee (2%)</span>
+                                <span id="withdrawFee">$0.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>You'll receive</span>
+                                <span class="summary-value accent" id="withdrawReceive">$0.00</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="requestWithdraw()">
+                            <i class="fas fa-paper-plane"></i> Request Withdrawal
+                        </button>
+
+                        <div class="info-box" style="margin-top: 16px;">
+                            <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                            <span class="info-text">Withdrawals require admin approval. Processing time: 24-48 hours.</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title" style="margin-bottom: 24px;">Withdrawal History</h3>
+                        <div id="withdrawalHistory">
+                            <div class="info-box">
+                                <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                                <span class="info-text">No withdrawal history found.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mining History Page -->
+            <section class="page" id="mining-history">
+                <h1 class="page-title">Mining History</h1>
+                <p class="page-subtitle">Track all your mining activities and earnings.</p>
+
+                <div class="history-filters">
+                    <button class="filter-btn active" onclick="filterHistory('all')">All</button>
+                    <button class="filter-btn" onclick="filterHistory('mining')">Mining</button>
+                    <button class="filter-btn" onclick="filterHistory('deposit')">Deposits</button>
+                    <button class="filter-btn" onclick="filterHistory('withdrawal')">Withdrawals</button>
+                </div>
+
+                <div class="card">
+                    <div style="overflow-x: auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Details</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="miningHistoryTable">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                        <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                                        No history found. Start mining to see your earnings here.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invite Page -->
+            <section class="page" id="invite">
+                <h1 class="page-title">Invite Friends</h1>
+                <p class="page-subtitle">Earn rewards when your friends start mining.</p>
+
+                <div class="invite-stats">
+                    <div class="invite-stat">
+                        <div class="invite-stat-icon primary"><i class="fas fa-users"></i></div>
+                        <div class="invite-stat-value" id="referralCount">0</div>
+                        <div class="invite-stat-label">Total Referrals</div>
+                    </div>
+                    <div class="invite-stat">
+                        <div class="invite-stat-icon success"><i class="fas fa-chart-line"></i></div>
+                        <div class="invite-stat-value success" id="referralEarnings">$0.00</div>
+                        <div class="invite-stat-label">Total Earned</div>
+                    </div>
+                    <div class="invite-stat">
+                        <div class="invite-stat-icon warning"><i class="fas fa-gift"></i></div>
+                        <div class="invite-stat-value warning" id="commissionRate">10%</div>
+                        <div class="invite-stat-label">Commission Rate</div>
+                    </div>
+                </div>
+
+                <div class="deposit-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="share-icon-box"><i class="fas fa-link"></i></div>
+                            <div>
+                                <div class="card-title">Share & Earn</div>
+                                <div class="card-subtitle">Invite friends and earn 10% of their mining rewards</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Your Referral Code</label>
+                            <div class="address-content">
+                                <input type="text" class="form-input" value="Loading..." readonly id="referralCode" style="font-family: monospace; font-size: 18px;">
+                                <button class="copy-btn" onclick="copyReferralCode()"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Your Referral Link</label>
+                            <div class="address-content">
+                                <input type="text" class="form-input" value="Loading..." readonly id="referralLink" style="font-size: 13px;">
+                                <button class="copy-btn" onclick="copyReferralLink()"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="shareOnSocial()">
+                            <i class="fas fa-share-alt"></i> Share on Social Media
+                        </button>
+
+                        <div class="how-it-works">
+                            <h4 class="how-it-works-title">How it works</h4>
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <span class="step-text">Share your referral link with friends</span>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <span class="step-text">They sign up and purchase a mining plan</span>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <span class="step-text">You earn 10% of their mining rewards</span>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">4</div>
+                                <span class="step-text">Rewards are credited daily to your balance</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title" style="margin-bottom: 24px;">Your Referrals</h3>
+                        <div id="referralsList">
+                            <div class="info-box">
+                                <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                                <span class="info-text">No referrals yet. Share your referral link to start earning.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-icon"><i class="fas fa-check-circle"></i></span>
+            <span id="toastMessage">Success!</span>
+        </div>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ✅ Supabase Initialization
+      // ✅ Supabase Initialization
+(function() {
+    const SUPABASE_URL = 'https://rgnxujdxhrcdpippsxvg.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnh1amR4aHJjZHBpcHBzeHZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4Njk5NDIsImV4cCI6MjA4MTQ0NTk0Mn0.LsLrVczLBw-8jfYHYz2eyvQidgRSzPVDui53UbzC2oQ';
+    
+    if (!window.supabaseClient) {
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+    
+    const supabase = window.supabaseClient;
+
+    // Current user data
+    let currentUser = null;
+    let userPlans = [];
+    let miningSession = null;
+    let miningInterval = null;
+    let miningPlans = [];
+    let selectedPlan = null;
+
+    // ✅ REFERRAL CODE AUTO-FILL FROM URL
+    (function() {
+        // Get referral code from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralCode = urlParams.get('ref');
+        
+        if (referralCode && document.getElementById('signupReferral')) {
+            document.getElementById('signupReferral').value = referralCode;
+        }
+    })();
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', async function() {
+        await checkAuthStatus();
+        generateQRPlaceholder();
+        initEventListeners();
+    });
+    
+    // ... rest of your code ...
+
+            // Authentication functions
+            window.showAuthForm = function(formType) {
+                document.querySelectorAll('.auth-form').forEach(form => {
+                    form.classList.remove('active');
+                });
+                
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                document.getElementById(`${formType}Form`).classList.add('active');
+                
+                if (formType === 'login' || formType === 'signup') {
+                    document.querySelector(`.auth-tab[onclick="showAuthForm('${formType}')"]`).classList.add('active');
+                }
+                
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.classList.remove('show');
+                });
+            };
+
+           window.login = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+    const btnText = document.getElementById('loginBtnText');
+    const spinner = document.getElementById('loginSpinner');
+    
+    if (!email || !password) {
+        errorDiv.textContent = 'Please fill in all fields';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    btnText.style.display = 'none';
+    spinner.style.display = 'inline-block';
+    
+    try {
+        // ✅ Use Supabase Auth for login
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
+        if (error) throw error;
+        
+        currentUser = data.user;
+        
+        // ✅ Check if user exists in our users table
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', currentUser.email)
+            .single();
+        
+        if (userError) {
+            // If user doesn't exist in our table, create it
+            const userReferralCode = generateReferralCode();
+            
+            await supabase
+                .from('users')
+                .insert({
+                    email: currentUser.email,
+                    name: currentUser.user_metadata?.name || 'User',
+                    referral_code: userReferralCode,
+                    balance: 0,
+                    total_earnings: 0,
+                    active_plans: 0,
+                    referrals: 0,
+                    referral_earnings: 0,
+                    created_at: new Date().toISOString()
+                });
+        } else {
+            await loadUserData();
+        }
+        
+        showMainApp();
+        showToast('Login successful!');
+        
+    } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.add('show');
+    } finally {
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+    }
+};
+
+          window.signup = async function() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    const referralCode = document.getElementById('signupReferral').value.trim();
+    const errorDiv = document.getElementById('signupError');
+    const btnText = document.getElementById('signupBtnText');
+    const spinner = document.getElementById('signupSpinner');
+    
+    if (!name || !email || !password || !confirmPassword) {
+        errorDiv.textContent = 'Please fill in all required fields';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    if (password.length < 6) {
+        errorDiv.textContent = 'Password must be at least 6 characters';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    btnText.style.display = 'none';
+    spinner.style.display = 'inline-block';
+    
+    try {
+        // ✅ FIRST: Check if user already exists in our users table
+        const { data: existingUsers } = await supabase
+            .from('users')
+            .select('email')
+            .eq('email', email);
+        
+        if (existingUsers && existingUsers.length > 0) {
+            throw new Error('Email already registered');
+        }
+        
+        // ✅ SECOND: Create user in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    name: name
+                }
+            }
+        });
+        
+        if (authError) throw authError;
+        
+        // ✅ THIRD: Create user record in our users table
+        const userReferralCode = generateReferralCode();
+        
+        const { error: userError } = await supabase
+            .from('users')
+            .insert({
+                email: email,
+                name: name,
+                referral_code: userReferralCode,
+                referred_by: referralCode || null,
+                balance: 0,
+                total_earnings: 0,
+                active_plans: 0,
+                referrals: 0,
+                referral_earnings: 0,
+                created_at: new Date().toISOString()
+            });
+        
+        if (userError) throw userError;
+        
+        // ✅ FOURTH: Handle referral if used
+        if (referralCode) {
+            // Find referrer
+            const { data: referrer } = await supabase
+                .from('users')
+                .select('email, referrals')
+                .eq('referral_code', referralCode)
+                .single();
+            
+            if (referrer) {
+                // Update referrer's referral count
+                await supabase
+                    .from('users')
+                    .update({
+                        referrals: (parseInt(referrer.referrals) || 0) + 1
+                    })
+                    .eq('email', referrer.email);
+                
+                // Create referral record
+                await supabase
+                    .from('transactions')
+                    .insert({
+                        user_id: referrer.email,
+                        type: 'referral',
+                        amount: 0,
+                        description: `New referral: ${name} (${email})`,
+                        created_at: new Date().toISOString()
+                    });
+            }
+        }
+        
+        showToast('Account created successfully! Please login.');
+        showAuthForm('login');
+        
+        // Clear form
+        document.getElementById('signupName').value = '';
+        document.getElementById('signupEmail').value = '';
+        document.getElementById('signupPassword').value = '';
+        document.getElementById('signupConfirmPassword').value = '';
+        document.getElementById('signupReferral').value = '';
+        
+    } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.add('show');
+    } finally {
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+    }
+};
+
+            window.forgotPassword = function() {
+                const email = document.getElementById('forgotEmail').value.trim();
+                const errorDiv = document.getElementById('forgotError');
+                
+                if (!email) {
+                    errorDiv.textContent = 'Please enter your email';
+                    errorDiv.classList.add('show');
+                    return;
+                }
+                
+                showToast('Password reset email sent!');
+                showAuthForm('login');
+            };
+
+            window.logout = async function() {
+                try {
+                    if (miningInterval) {
+                        clearInterval(miningInterval);
+                        miningInterval = null;
+                    }
+                    
+                    if (currentUser && miningSession) {
+                        await supabase
+                            .from('mining_sessions')
+                            .update({ 
+                                is_active: false,
+                                last_update: new Date().toISOString()
+                            })
+                            .eq('user_id', currentUser.email);
+                    }
+                    
+                    await supabase.auth.signOut();
+                    
+                    currentUser = null;
+                    userPlans = [];
+                    miningSession = null;
+                    miningPlans = [];
+                    selectedPlan = null;
+                    
+                    showAuthPage();
+                    showToast('Logged out successfully');
+                    
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            };
+
+            // Main app functions
+            function showAuthPage() {
+                document.getElementById('authContainer').style.display = 'flex';
+                document.getElementById('mainApp').classList.remove('active');
+            }
+
+            async function showMainApp() {
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('mainApp').classList.add('active');
+                document.getElementById('userEmail').textContent = currentUser.email;
+                
+                // Show plans page first (not dashboard)
+                showPage('dashboard');
+                await loadPlans();
+                await loadDashboardData();
+                updateWithdrawSummary();
+                startMiningCheck();
+            }
+
+            async function checkAuthStatus() {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (session) {
+                    currentUser = session.user;
+                    await loadUserData();
+                    showMainApp();
+                } else {
+                    showAuthPage();
+                }
+            }
+
+            function initEventListeners() {
+                document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawSummary);
+                
+                document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') login();
+                });
+                
+                document.getElementById('signupConfirmPassword').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') signup();
+                });
+            }
+
+            async function loadUserData() {
+                if (!currentUser) return;
+                
+                try {
+                    // Load mining session
+                    const { data: sessionData } = await supabase
+                        .from('mining_sessions')
+                        .select('*')
+                        .eq('user_id', currentUser.email)
+                        .single();
+                    
+                    miningSession = sessionData;
+                    
+                    // Load user plans
+                    const { data: plansData } = await supabase
+                        .from('plan_purchases')
+                        .select('*')
+                        .eq('user_id', currentUser.email)
+                        .eq('status', 'active');
+                    
+                    userPlans = plansData || [];
+                    
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+
+            async function loadDashboardData() {
+                if (!currentUser) return;
+                
+                try {
+                    // Load user info
+                    const { data: userData, error: userError } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('email', currentUser.email)
+                        .single();
+                    
+                    if (userError) throw userError;
+                    
+                    // Load mining session
+                    const { data: sessionData, error: sessionError } = await supabase
+                        .from('mining_sessions')
+                        .select('*')
+                        .eq('user_id', currentUser.email)
+                        .single();
+                    
+                    if (sessionError) {
+                        miningSession = null;
+                    } else {
+                        miningSession = sessionData;
+                    }
+                    
+                    // Load active plans
+                    const { data: activePlans, error: plansError } = await supabase
+                        .from('plan_purchases')
+                        .select('*')
+                        .eq('user_id', currentUser.email)
+                        .eq('status', 'active');
+                    
+                    if (!plansError) {
+                        userPlans = activePlans || [];
+                    }
+                    
+                    // Update UI
+                    updateDashboardUI(userData);
+                    
+                    // Check if mining is active
+                    if (miningSession && miningSession.is_active === true) {
+                        updateMiningProgress();
+                        startMiningUpdates();
+                    } else {
+                        resetMiningUI();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading dashboard:', error);
+                }
+            }
+
+            function updateDashboardUI(userData) {
+                if (!userData) return;
+                
+                document.getElementById('currentBalance').textContent = '$' + (parseFloat(userData.balance) || 0).toFixed(2);
+                document.getElementById('totalBalance').textContent = '$' + (parseFloat(userData.balance) || 0).toFixed(2);
+                document.getElementById('availableBalance').textContent = '$' + (parseFloat(userData.balance) || 0).toFixed(2);
+                document.getElementById('totalEarnings').textContent = '$' + (parseFloat(userData.total_earnings) || 0).toFixed(2);
+                document.getElementById('activePlans').textContent = parseInt(userData.active_plans) || 0;
+                document.getElementById('totalReferrals').textContent = parseInt(userData.referrals) || 0;
+                document.getElementById('referralEarnings').textContent = '$' + (parseFloat(userData.referral_earnings) || 0).toFixed(2);
+                document.getElementById('referralCount').textContent = parseInt(userData.referrals) || 0;
+                
+                document.getElementById('referralCode').value = userData.referral_code || 'N/A';
+              document.getElementById('referralLink').value = window.location.origin + '/index.html?ref=' + (userData.referral_code || 'N/A');
+            }
+
+            function resetMiningUI() {
+                document.getElementById('progressValue').textContent = '0%';
+                document.getElementById('expectedEarnings').textContent = '$0.00';
+                document.querySelector('.countdown-label').innerHTML = '<i class="fas fa-clock"></i><span>No active mining plan</span>';
+                
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                
+                // Reset progress circle
+                const progressCircle = document.getElementById('progressCircle');
+                const circumference = 2 * Math.PI * 88;
+                progressCircle.style.strokeDasharray = `${circumference}`;
+                progressCircle.style.strokeDashoffset = circumference;
+            }
+
+            async function loadPlans() {
+                try {
+                    const { data, error } = await supabase
+                        .from('mining_plans')
+                        .select('*')
+                        .eq('status', 'active')
+                        .order('price', { ascending: true });
+                    
+                    if (error) throw error;
+                    
+                    miningPlans = data || [];
+                    renderPlans();
+                    
+                } catch (error) {
+                    console.error('Error loading plans:', error);
+                }
+            }
+
+            function renderPlans() {
+                const container = document.getElementById('plansContainer');
+                container.innerHTML = '';
+                
+                if (!miningPlans.length) {
+                    container.innerHTML = `
+                        <div class="info-box" style="grid-column: 1/-1;">
+                            <span class="info-icon"><i class="fas fa-info-circle"></i></span>
+                            <span class="info-text">No mining plans available at the moment.</span>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                miningPlans.forEach(plan => {
+                    const planCard = document.createElement('div');
+                    planCard.className = `plan-card ${plan.popular ? 'popular' : ''}`;
+                    
+                    planCard.innerHTML = `
+                        ${plan.popular ? '<div class="popular-badge"><i class="fas fa-crown"></i> Most Popular</div>' : ''}
+                        <div class="plan-name">${plan.name}</div>
+                        <div class="plan-price">
+                            <span class="plan-price-value">$${plan.price}</span>
+                            <span class="plan-price-unit">USDT</span>
+                        </div>
+                        <div class="plan-stats">
+                            <div class="plan-stat">
+                                <div class="plan-stat-value green">${plan.daily_return}%</div>
+                                <div class="plan-stat-label">Daily Return</div>
+                            </div>
+                            <div class="plan-stat">
+                                <div class="plan-stat-value orange">${plan.duration}</div>
+                                <div class="plan-stat-label">Days</div>
+                            </div>
+                        </div>
+                        <div class="plan-total">
+                            <span class="plan-total-label">Total Return</span>
+                            <span class="plan-total-value">${plan.total_return}%</span>
+                        </div>
+                        <div class="plan-features">
+                            ${plan.features ? plan.features.split(',').map(feature => `
+                                <div class="plan-feature">
+                                    <div class="plan-feature-icon"><i class="fas fa-check"></i></div>
+                                    <span class="plan-feature-text">${feature.trim()}</span>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                        <button class="btn ${plan.popular ? 'btn-primary' : 'btn-outline'}" onclick="selectPlan('${plan.id}')">
+                            <i class="fas fa-check-circle"></i> Select Plan
+                        </button>
+                    `;
+                    
+                    container.appendChild(planCard);
+                });
+            }
+
+            // ✅ NEW: Plan Selection Function
+            window.selectPlan = function(planId) {
+                const plan = miningPlans.find(p => p.id === planId);
+                if (!plan) {
+                    showToast('Plan not found', 'error');
+                    return;
+                }
+                
+                selectedPlan = plan;
+                
+                // Show deposit page directly
+                showPage('deposit');
+                
+                // Update deposit info
+                document.getElementById('depositAmount').value = plan.price;
+                document.getElementById('depositAmount').min = plan.price;
+                
+                showToast(`Selected ${plan.name} plan. Please deposit $${plan.price} USDT to start mining.`);
+            };
+
+         window.requestDeposit = async function() {
+    if (!selectedPlan) {
+        showToast('Please select a plan first', 'error');
+        showPage('plans');
+        return;
+    }
+    
+    const amount = parseFloat(document.getElementById('depositAmount').value);
+    const hash = document.getElementById('depositHash').value.trim();
+    
+    if (!amount || isNaN(amount) || amount < selectedPlan.price) {
+        showToast(`Minimum deposit is $${selectedPlan.price} USDT for this plan`, 'error');
+        return;
+    }
+    
+    if (!hash) {
+        showToast('Please enter transaction hash', 'error');
+        return;
+    }
+    
+    try {
+        // ✅ Get user's referred_by info
+        const { data: userData } = await supabase
+            .from('users')
+            .select('referred_by')
+            .eq('email', currentUser.email)
+            .single();
+        
+        // Save deposit request
+        const depositData = {
+            user_id: currentUser.email,
+            amount: amount,
+            transaction_hash: hash,
+            plan_id: selectedPlan.id,
+            plan_name: selectedPlan.name,
+            plan_price: selectedPlan.price,
+            daily_return: selectedPlan.daily_return,
+            duration: selectedPlan.duration,
+            status: 'pending',
+            referred_by: userData?.referred_by || null, // ✅ Add referred_by
+            created_at: new Date().toISOString()
+        };
+        
+        await supabase
+            .from('deposit_requests')
+            .insert(depositData);
+        
+        // Clear form
+        document.getElementById('depositAmount').value = '';
+        document.getElementById('depositHash').value = '';
+        
+        showToast('✅ Deposit request submitted!');
+        showPage('dashboard');
+        
+    } catch (error) {
+        console.error('Error requesting deposit:', error);
+        showToast('Error submitting deposit request', 'error');
+    }
+};
+            function startMiningCheck() {
+                if (miningInterval) {
+                    clearInterval(miningInterval);
+                }
+                
+                miningInterval = setInterval(async () => {
+                    if (miningSession && miningSession.is_active === true) {
+                        await updateMiningProgress();
+                    }
+                }, 1000);
+            }
+
+            async function updateMiningProgress() {
+                if (!miningSession || miningSession.is_active !== true) {
+                    resetMiningUI();
+                    return;
+                }
+                
+                try {
+                    const now = new Date();
+                    
+                    if (!miningSession.next_payout_time) {
+                        const nextPayoutTime = new Date();
+                        nextPayoutTime.setHours(nextPayoutTime.getHours() + 24);
+                        
+                        await supabase
+                            .from('mining_sessions')
+                            .update({
+                                next_payout_time: nextPayoutTime.toISOString(),
+                                last_update: now.toISOString()
+                            })
+                            .eq('user_id', currentUser.email);
+                        
+                        miningSession.next_payout_time = nextPayoutTime.toISOString();
+                    }
+                    
+                    const nextPayoutTime = new Date(miningSession.next_payout_time);
+                    
+                    // Calculate time until next payout
+                    const timeUntilPayout = nextPayoutTime - now;
+                    
+                    // If payout time reached (or passed)
+                    if (timeUntilPayout <= 0) {
+                        await processDailyEarnings();
+                        return;
+                    }
+                    
+                    // Update progress percentage (24 hours = 86400000 ms)
+                    const totalTime = 24 * 60 * 60 * 1000;
+                    const elapsedTime = totalTime - timeUntilPayout;
+                    const progressPercent = Math.min(100, (elapsedTime / totalTime) * 100);
+                    
+                    // Calculate remaining time
+                    const remainingHours = Math.floor(timeUntilPayout / (1000 * 60 * 60));
+                    const remainingMinutes = Math.floor((timeUntilPayout % (1000 * 60 * 60)) / (1000 * 60));
+                    const remainingSeconds = Math.floor((timeUntilPayout % (1000 * 60)) / 1000);
+                    
+                    // Update UI
+                    updateMiningProgressUI(progressPercent, remainingHours, remainingMinutes, remainingSeconds);
+                    
+                } catch (error) {
+                    console.error('Error updating mining progress:', error);
+                    resetMiningUI();
+                }
+            }
+
+            function updateMiningProgressUI(progressPercent, hours, minutes, seconds) {
+                if (!miningSession || miningSession.is_active !== true) {
+                    resetMiningUI();
+                    return;
+                }
+                
+                try {
+                    const dailyEarnings = parseFloat(miningSession.daily_earnings) || 0;
+                    
+                    // Update progress circle
+                    const progressCircle = document.getElementById('progressCircle');
+                    const circumference = 2 * Math.PI * 88;
+                    const offset = circumference - (progressPercent / 100) * circumference;
+                    
+                    progressCircle.style.strokeDasharray = `${circumference}`;
+                    progressCircle.style.strokeDashoffset = offset;
+                    
+                    // Update UI
+                    document.getElementById('progressValue').textContent = `${progressPercent.toFixed(1)}%`;
+                    document.getElementById('expectedEarnings').textContent = `$${dailyEarnings.toFixed(2)}`;
+                    document.querySelector('.countdown-label').innerHTML = '<i class="fas fa-clock"></i><span>Mining in progress...</span>';
+                    
+                    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+                    
+                } catch (error) {
+                    console.error('Error updating mining progress UI:', error);
+                    resetMiningUI();
+                }
+            }
+
+            async function processDailyEarnings() {
+                try {
+                    if (!currentUser || !miningSession) return;
+                    
+                    // Get current plan
+                    const { data: plan, error: planError } = await supabase
+                        .from('plan_purchases')
+                        .select('*')
+                        .eq('user_id', currentUser.email)
+                        .eq('status', 'active')
+                        .eq('plan_id', miningSession.current_plan_id)
+                        .single();
+                    
+                    if (planError || !plan) {
+                        console.error('Error getting plan:', planError);
+                        return;
+                    }
+                    
+                    const currentDay = miningSession.current_day || 1;
+                    
+                    // Check if all days completed
+                    if (currentDay >= plan.duration) {
+                        await completeMiningPlan(plan);
+                        return;
+                    }
+                    
+                    const dailyEarnings = parseFloat(miningSession.daily_earnings) || 0;
+                    
+                    // Add earnings to user balance
+                    const { data: user, error: userError } = await supabase
+                        .from('users')
+                        .select('balance, total_earnings')
+                        .eq('email', currentUser.email)
+                        .single();
+                    
+                    if (userError) throw userError;
+                    
+                    const newBalance = (parseFloat(user.balance) || 0) + dailyEarnings;
+                    const newTotalEarnings = (parseFloat(user.total_earnings) || 0) + dailyEarnings;
+                    
+                    await supabase
+                        .from('users')
+                        .update({ 
+                            balance: newBalance,
+                            total_earnings: newTotalEarnings
+                        })
+                        .eq('email', currentUser.email);
+                    
+                    // Update mining session for next day
+                    const nextDay = currentDay + 1;
+                    const nextPayoutTime = new Date();
+                    nextPayoutTime.setHours(nextPayoutTime.getHours() + 24);
+                    
+                    await supabase
+                        .from('mining_sessions')
+                        .update({ 
+                            current_day: nextDay,
+                            start_time: new Date().toISOString(),
+                            next_payout_time: nextPayoutTime.toISOString(),
+                            last_update: new Date().toISOString()
+                        })
+                        .eq('user_id', currentUser.email);
+                    
+                    // Update local mining session
+                    miningSession.current_day = nextDay;
+                    miningSession.start_time = new Date().toISOString();
+                    miningSession.next_payout_time = nextPayoutTime.toISOString();
+                    miningSession.last_update = new Date().toISOString();
+                    
+                    // Add transaction record
+                    await supabase
+                        .from('transactions')
+                        .insert({
+                            user_id: currentUser.email,
+                            type: 'mining',
+                            amount: dailyEarnings,
+                            description: `Day ${currentDay} Mining Earnings (${plan.plan_name})`,
+                            status: 'completed',
+                            created_at: new Date().toISOString()
+                        });
+                    
+                    // Refresh dashboard
+                    await loadDashboardData();
+                    
+                    showToast(`💰 Daily earnings of $${dailyEarnings.toFixed(2)} added to your balance! (Day ${currentDay}/${plan.duration})`);
+                    
+                } catch (error) {
+                    console.error('Error processing daily earnings:', error);
+                }
+            }
+
+            async function completeMiningPlan(plan) {
+                try {
+                    // Mark plan as completed
+                    await supabase
+                        .from('plan_purchases')
+                        .update({ status: 'completed' })
+                        .eq('user_id', currentUser.email)
+                        .eq('plan_id', plan.plan_id);
+                    
+                    // Stop mining session
+                    await supabase
+                        .from('mining_sessions')
+                        .update({ 
+                            is_active: false,
+                            current_plan_id: null
+                        })
+                        .eq('user_id', currentUser.email);
+                    
+                    // Update user active plans count
+                    const { data: user } = await supabase
+                        .from('users')
+                        .select('active_plans')
+                        .eq('email', currentUser.email)
+                        .single();
+                    
+                    const newActivePlans = Math.max(0, (parseInt(user.active_plans) || 0) - 1);
+                    
+                    await supabase
+                        .from('users')
+                        .update({ 
+                            active_plans: newActivePlans
+                        })
+                        .eq('email', currentUser.email);
+                    
+                    // Update local state
+                    miningSession.is_active = false;
+                    miningSession.current_plan_id = null;
+                    
+                    // Stop mining updates
+                    if (miningInterval) {
+                        clearInterval(miningInterval);
+                        miningInterval = null;
+                    }
+                    
+                    // Update UI
+                    await loadDashboardData();
+                    
+                    showToast(`🎉 Mining plan "${plan.plan_name}" completed successfully!`);
+                    
+                } catch (error) {
+                    console.error('Error completing mining plan:', error);
+                }
+            }
+
+            function startMiningUpdates() {
+                if (miningInterval) {
+                    clearInterval(miningInterval);
+                }
+                
+                miningInterval = setInterval(() => {
+                    if (miningSession && miningSession.is_active === true) {
+                        updateMiningProgress();
+                    } else {
+                        resetMiningUI();
+                    }
+                }, 1000);
+            }
+
+            window.setMaxWithdraw = function() {
+                const balance = parseFloat(document.getElementById('availableBalance').textContent.replace('$', ''));
+                document.getElementById('withdrawAmount').value = balance.toFixed(2);
+                updateWithdrawSummary();
+            };
+
+            window.updateWithdrawSummary = function() {
+                const amount = document.getElementById('withdrawAmount').value || 0;
+                const amountNum = parseFloat(amount);
+                const fee = amountNum * 0.02;
+                const receive = amountNum - fee;
+                
+                document.getElementById('withdrawSummaryAmount').textContent = '$' + amountNum.toFixed(2);
+                document.getElementById('withdrawFee').textContent = '$' + fee.toFixed(2);
+                document.getElementById('withdrawReceive').textContent = '$' + receive.toFixed(2);
+            };
+
+           window.requestWithdraw = async function() {
+    const address = document.getElementById('withdrawAddress').value.trim();
+    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const balance = parseFloat(document.getElementById('availableBalance').textContent.replace('$', ''));
+    
+    if (!address) {
+        showToast('Please enter your USDT address', 'error');
+        return;
+    }
+    
+    if (!amount || isNaN(amount) || amount < 20) {
+        showToast('Minimum withdrawal is $20 USDT', 'error');
+        return;
+    }
+    
+    if (amount > balance) {
+        showToast('Insufficient balance', 'error');
+        return;
+    }
+    
+    try {
+        // ✅ Calculate fee and net amount
+        const fee = amount * 0.02; // 2% fee
+        const netAmount = amount - fee; // User ko milne wala amount
+        
+        // ✅ Insert NET AMOUNT (after fee) in withdrawal_requests
+        await supabase
+            .from('withdrawal_requests')
+            .insert({
+                user_id: currentUser.email,
+                amount: netAmount, // ✅ CHANGE HERE: Save net amount (98$)
+                wallet_address: address,
+                status: 'pending',
+                created_at: new Date().toISOString()
+                // ✅ Note: Fee amount field agar database mein hai to add karo
+            });
+        
+        document.getElementById('withdrawAddress').value = '';
+        document.getElementById('withdrawAmount').value = '';
+        updateWithdrawSummary();
+        
+        // ✅ Update toast message
+        showToast(`Withdrawal request submitted! You'll receive $${netAmount.toFixed(2)} ($${fee.toFixed(2)} fee deducted).`);
+        
+    } catch (error) {
+        console.error('Error requesting withdrawal:', error);
+        showToast('Error submitting withdrawal request', 'error');
+    }
+};
+// ✅ Mining History Filter Functions
+let currentHistoryFilter = 'all';
+let allTransactionsData = [];
+
+// Load Mining History with Filters
+async function loadMiningHistory() {
+    try {
+        // Get all transactions for the user
+        const { data: allTx, error } = await supabase
+            .from('transactions')
+            .select('*')
+            .eq('user_id', currentUser.email)
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        allTransactionsData = allTx || [];
+        applyHistoryFilter(currentHistoryFilter);
+        
+    } catch (error) {
+        console.error('Error loading mining history:', error);
+        const container = document.getElementById('miningHistoryTable');
+        container.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                    Error loading history. Please try again.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Filter History Function
+window.filterHistory = function(filterType) {
+    currentHistoryFilter = filterType;
+    
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    applyHistoryFilter(filterType);
+};
+
+// Apply Filter to Data
+function applyHistoryFilter(filterType) {
+    let filteredData = [...allTransactionsData];
+    
+    if (filterType === 'mining') {
+        filteredData = filteredData.filter(tx => tx.type === 'mining');
+    } else if (filterType === 'deposit') {
+        filteredData = filteredData.filter(tx => tx.type === 'deposit');
+    } else if (filterType === 'withdrawal') {
+        filteredData = filteredData.filter(tx => tx.type === 'withdrawal');
+    }
+    // 'all' filter shows everything
+    
+    renderHistoryTable(filteredData);
+}
+
+// Render History Table
+function renderHistoryTable(transactions) {
+    const container = document.getElementById('miningHistoryTable');
+    
+    if (!transactions || transactions.length === 0) {
+        container.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                    No ${currentHistoryFilter === 'all' ? '' : currentHistoryFilter + ' '}history found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    transactions.forEach(tx => {
+        // Transaction Type Badge
+        let typeBadge = '';
+        let typeColor = '';
+        let icon = '';
+        
+        switch(tx.type) {
+            case 'mining':
+                typeBadge = 'Mining Earnings';
+                typeColor = '#2dd4bf';
+                icon = '<i class="fas fa-cube"></i>';
+                break;
+            case 'deposit':
+                typeBadge = 'Deposit';
+                typeColor = '#22c55e';
+                icon = '<i class="fas fa-wallet"></i>';
+                break;
+            case 'withdrawal':
+                typeBadge = 'Withdrawal';
+                typeColor = '#ef4444';
+                icon = '<i class="fas fa-money-bill-wave"></i>';
+                break;
+            case 'referral':
+                typeBadge = 'Referral Bonus';
+                typeColor = '#8b5cf6';
+                icon = '<i class="fas fa-users"></i>';
+                break;
+            case 'plan_purchase':
+                typeBadge = 'Plan Purchase';
+                typeColor = '#f59e0b';
+                icon = '<i class="fas fa-shopping-cart"></i>';
+                break;
+            case 'vip_assignment':
+                typeBadge = 'VIP Assignment';
+                typeColor = '#FFD700';
+                icon = '<i class="fas fa-crown"></i>';
+                break;
+            case 'bonus':
+                typeBadge = 'Bonus';
+                typeColor = '#3b82f6';
+                icon = '<i class="fas fa-gift"></i>';
+                break;
+            default:
+                typeBadge = tx.type.charAt(0).toUpperCase() + tx.type.slice(1);
+                typeColor = '#94a3b8';
+                icon = '<i class="fas fa-exchange-alt"></i>';
+        }
+        
+        // Amount Display
+        let amountDisplay = '';
+        let amountColor = '';
+        
+        if (tx.type === 'withdrawal') {
+            amountDisplay = `-$${parseFloat(tx.amount).toFixed(2)}`;
+            amountColor = 'var(--danger)';
+        } else if (tx.type === 'deposit' || tx.type === 'plan_purchase') {
+            amountDisplay = `-$${parseFloat(tx.amount).toFixed(2)}`;
+            amountColor = 'var(--warning)';
+        } else {
+            amountDisplay = `+$${parseFloat(tx.amount).toFixed(2)}`;
+            amountColor = 'var(--success)';
+        }
+        
+        // Status Badge
+        let statusBadge = '';
+        if (tx.status === 'completed') {
+            statusBadge = '<span class="status-badge status-approved">Completed</span>';
+        } else if (tx.status === 'pending') {
+            statusBadge = '<span class="status-badge status-pending">Pending</span>';
+        } else if (tx.status === 'failed') {
+            statusBadge = '<span class="status-badge status-rejected">Failed</span>';
+        } else {
+            statusBadge = '<span class="status-badge status-approved">Completed</span>';
+        }
+        
+        // Date Format
+        const txDate = new Date(tx.created_at);
+        const dateStr = txDate.toLocaleDateString();
+        const timeStr = txDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // Extra Details for specific types
+        let extraDetails = '';
+        if (tx.type === 'deposit' && tx.description && tx.description.includes('Plan:')) {
+            extraDetails = `<div style="font-size: 12px; color: var(--accent); margin-top: 4px;">
+                <i class="fas fa-info-circle"></i> ${tx.description}
+            </div>`;
+        }
+        
+        html += `
+            <tr>
+                <td>
+                    <div class="mining-type">
+                        <div class="type-icon" style="background: ${typeColor}20; color: ${typeColor};">
+                            ${icon}
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;">${typeBadge}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ${txDate.toLocaleDateString('en-US', { weekday: 'short' })}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-weight: 500;">${tx.description || typeBadge}</div>
+                    ${extraDetails}
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                        ID: ${tx.id.substring(0, 8)}...
+                    </div>
+                </td>
+                <td>
+                    <div style="color: ${amountColor}; font-weight: 600; font-size: 16px;">
+                        ${amountDisplay}
+                    </div>
+                    ${tx.type === 'withdrawal' ? 
+                        `<div style="font-size: 12px; color: var(--text-secondary);">Fee: $${(tx.amount * 0.02).toFixed(2)}</div>` : 
+                        ''}
+                </td>
+                <td>
+                    <div style="font-weight: 500;">${dateStr}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">${timeStr}</div>
+                </td>
+                <td>${statusBadge}</td>
+            </tr>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// ✅ Statistics for Mining History
+async function loadHistoryStats() {
+    try {
+        if (!allTransactionsData.length) return;
+        
+        // Calculate totals
+        let miningTotal = 0;
+        let depositTotal = 0;
+        let withdrawalTotal = 0;
+        let referralTotal = 0;
+        
+        allTransactionsData.forEach(tx => {
+            const amount = parseFloat(tx.amount) || 0;
+            
+            switch(tx.type) {
+                case 'mining':
+                    miningTotal += amount;
+                    break;
+                case 'deposit':
+                    depositTotal += amount;
+                    break;
+                case 'withdrawal':
+                    withdrawalTotal += amount;
+                    break;
+                case 'referral':
+                    referralTotal += amount;
+                    break;
+            }
+        });
+        
+        // Show stats (optional - you can add this to the page)
+        console.log('History Stats:', {
+            miningTotal,
+            depositTotal,
+            withdrawalTotal,
+            referralTotal,
+            totalTransactions: allTransactionsData.length
+        });
+        
+    } catch (error) {
+        console.error('Error loading history stats:', error);
+    }
+}
+
+// ✅ Initialize Mining History when page loads
+function initMiningHistory() {
+    // Set click events for filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        const filterType = btn.textContent.toLowerCase();
+        btn.onclick = () => filterHistory(filterType);
+    });
+    
+    // Load data when mining-history page is shown
+    document.addEventListener('DOMContentLoaded', function() {
+        const miningHistoryPage = document.getElementById('mining-history');
+        
+        // Create observer to detect when page becomes visible
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    const isVisible = miningHistoryPage.classList.contains('active');
+                    if (isVisible && currentUser) {
+                        loadMiningHistory();
+                    }
+                }
+            });
+        });
+        
+        observer.observe(miningHistoryPage, { attributes: true });
+    });
+}
+
+// Call initialization
+initMiningHistory();
+
+// ✅ Also update the showPage function to load mining history
+// In your existing showPage function, add:
+/*
+window.showPage = function(pageId) {
+    // ... existing code ...
+    
+    switch(pageId) {
+        case 'dashboard':
+            loadDashboardData();
+            loadRecentTransactions();
+            break;
+        case 'plans':
+            loadPlans();
+            break;
+        case 'deposit':
+            loadDepositHistory();
+            break;
+        case 'withdraw':
+            loadWithdrawalHistory();
+            updateWithdrawSummary();
+            break;
+        case 'mining-history':  // ✅ Add this case
+            loadMiningHistory();
+            break;
+        case 'invite':
+            loadReferralData();
+            break;
+    }
+    
+    // ... existing code ...
+};
+*/
+
+            // Utility functions
+            function generateQRPlaceholder() {
+                const qrCode = document.getElementById('qrCode');
+                qrCode.innerHTML = '';
+                for (let i = 0; i < 25; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'qr-cell';
+                    cell.style.background = Math.random() > 0.5 ? 'var(--text-primary)' : 'transparent';
+                    qrCode.appendChild(cell);
+                }
+            }
+
+            function generateReferralCode() {
+                return 'CM' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            }
+
+            // Toast Notification
+            window.showToast = function(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+                const toastIcon = toast.querySelector('.toast-icon');
+                
+                toastMessage.textContent = message;
+                toast.className = `toast ${type} show`;
+                
+                if (type === 'error') {
+                    toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+                } else {
+                    toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                }
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            };
+
+            // Copy functions
+            window.copyAddress = function() {
+                const address = document.getElementById('usdtAddress').textContent;
+                navigator.clipboard.writeText(address);
+                showToast('Address copied to clipboard!');
+            };
+
+            window.copyReferralCode = function() {
+                const code = document.getElementById('referralCode').value;
+                navigator.clipboard.writeText(code);
+                showToast('Referral code copied!');
+            };
+
+            window.copyReferralLink = function() {
+                const link = document.getElementById('referralLink').value;
+                navigator.clipboard.writeText(link);
+                showToast('Referral link copied!');
+            };
+
+            window.shareOnSocial = function() {
+                const link = document.getElementById('referralLink').value;
+                const text = `Join CryptoMine and start earning with crypto mining!`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'CryptoMine - Crypto Mining Platform',
+                        text: text,
+                        url: link,
+                    });
+                } else {
+                    navigator.clipboard.writeText(`${text}\n${link}`);
+                    showToast('Referral link copied to clipboard!');
+                }
+            };
+
+            // Page Navigation
+            window.showPage = function(pageId) {
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                document.getElementById(pageId).classList.add('active');
+                
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === pageId) {
+                        item.classList.add('active');
+                    }
+                });
+
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            };
+
+            // Toggle Sidebar (Mobile)
+            window.toggleSidebar = function() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.overlay');
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            };
+
+            // Make functions available globally
+            window.supabase = supabase;
+            window.currentUser = currentUser;
+            window.userPlans = userPlans;
+            window.miningSession = miningSession;
+            
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,3696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoMine - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #151c2c;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #2dd4bf;
+            --accent-glow: rgba(45, 212, 191, 0.3);
+            --info: #3b82f6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #1e293b;
+            --vip-gold: #FFD700;
+            --vip-silver: #C0C0C0;
+            --vip-bronze: #CD7F32;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Admin Login */
+        .admin-auth {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-box {
+            background: rgba(21, 28, 44, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .admin-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--danger), var(--warning));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .admin-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            color: var(--bg-primary);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        .btn-vip {
+            background: linear-gradient(135deg, var(--vip-gold), #FFA500);
+            color: black;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(21, 28, 44, 0.9);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .admin-nav {
+            margin-top: 40px;
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .admin-nav-item:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .admin-nav-item.active {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .admin-nav-badge {
+            position: absolute;
+            right: 16px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .admin-content {
+            margin-left: 280px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .admin-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-page-title {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .admin-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 12px;
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Stats Cards */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .admin-stat-card {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .admin-stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .admin-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .admin-stat-value.success {
+            color: var(--success);
+        }
+
+        .admin-stat-value.warning {
+            color: var(--warning);
+        }
+
+        .admin-stat-value.danger {
+            color: var(--danger);
+        }
+
+        .admin-stat-value.vip {
+            color: var(--vip-gold);
+        }
+
+        /* Table Styles */
+        .admin-table-container {
+            background: rgba(21, 28, 44, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .admin-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-approved {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .status-active {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+        }
+
+        .status-inactive {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .vip-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vip-gold {
+            background: linear-gradient(135deg, var(--vip-gold), #FFA500);
+            color: black;
+            border: 1px solid var(--vip-gold);
+        }
+
+        .vip-silver {
+            background: linear-gradient(135deg, var(--vip-silver), #A0A0A0);
+            color: black;
+            border: 1px solid var(--vip-silver);
+        }
+
+        .vip-bronze {
+            background: linear-gradient(135deg, var(--vip-bronze), #8B4513);
+            color: white;
+            border: 1px solid var(--vip-bronze);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .action-approve {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .action-approve:hover {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .action-reject {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .action-reject:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .action-edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+
+        .action-edit:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .action-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .action-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .action-view {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+            border: 1px solid #a855f7;
+        }
+
+        .action-view:hover {
+            background: rgba(168, 85, 247, 0.2);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Page Container */
+        .page-container {
+            display: none;
+        }
+
+        .page-container.active {
+            display: block;
+        }
+
+        /* VIP Section */
+        .vip-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .vip-filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vip-filter-btn.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--vip-gold);
+            border-color: var(--vip-gold);
+        }
+
+        .vip-level-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .vip-level {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .vip-level.gold {
+            background: linear-gradient(135deg, var(--vip-gold), #FFA500);
+            color: black;
+        }
+
+        .vip-level.silver {
+            background: linear-gradient(135deg, var(--vip-silver), #A0A0A0);
+            color: black;
+        }
+
+        .vip-level.bronze {
+            background: linear-gradient(135deg, var(--vip-bronze), #8B4513);
+            color: white;
+        }
+
+        /* Real-time Notification */
+        .real-time-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(21, 28, 44, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 1001;
+            max-width: 300px;
+        }
+
+        .real-time-notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            color: var(--accent);
+        }
+
+        .notification-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-content p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                width: 240px;
+            }
+            .admin-content {
+                margin-left: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            .admin-content {
+                margin-left: 0;
+                padding: 80px 16px 32px;
+            }
+            .mobile-toggle {
+                display: flex;
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                z-index: 200;
+                width: 40px;
+                height: 40px;
+                background: rgba(21, 28, 44, 0.9);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 20px;
+                color: var(--text-primary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Login -->
+    <div class="admin-auth" id="adminAuth">
+        <div class="admin-box">
+            <div class="admin-header">
+                <div class="admin-logo">
+                    <div class="admin-logo-icon"><i class="fas fa-shield-alt"></i></div>
+                </div>
+                <h2 class="admin-title">Admin Panel</h2>
+                <p class="admin-subtitle">CryptoMine Control Center</p>
+            </div>
+
+            <div class="error-message" id="adminError"></div>
+
+            <div class="form-group">
+                <label class="form-label">Admin Email</label>
+                <input type="email" class="form-input" id="adminEmail" placeholder="admin@cryptomine.app" value="admin@cryptomine.app">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="adminPassword" placeholder="Enter password" value="admin123">
+            </div>
+
+            <button class="btn btn-primary" onclick="adminLogin()">
+                <span id="loginBtnText">Login</span>
+                <span class="spinner" id="loginSpinner" style="display: none;"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle" onclick="toggleAdminSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Real-time Notification -->
+        <div class="real-time-notification" id="realTimeNotification">
+            <div class="notification-icon"><i class="fas fa-bell"></i></div>
+            <div class="notification-content">
+                <h4 id="notificationTitle">New Request</h4>
+                <p id="notificationMessage">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-logo" style="justify-content: flex-start;">
+                <div class="admin-logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <div style="font-size: 20px; font-weight: 700;">CryptoMine</div>
+                    <div style="font-size: 12px; color: var(--danger);">Admin Panel</div>
+                </div>
+            </div>
+
+            <div class="admin-nav">
+                <div class="admin-nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="admin-nav-item" data-page="plans">
+                    <i class="fas fa-cubes"></i>
+                    <span>Mining Plans</span>
+                </div>
+                <div class="admin-nav-item" data-page="deposits">
+                    <i class="fas fa-wallet"></i>
+                    <span>Deposit Requests</span>
+                    <span class="admin-nav-badge" id="pendingDepositsBadge">0</span>
+                </div>
+                <div class="admin-nav-item" data-page="withdrawals">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Withdrawal Requests</span>
+                    <span class="admin-nav-badge" id="pendingWithdrawalsBadge">0</span>
+                </div>
+                <div class="admin-nav-item" data-page="plan-purchases">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Plan Purchases</span>
+                    <span class="admin-nav-badge" id="pendingPlansBadge">0</span>
+                </div>
+                <div class="admin-nav-item" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users Management</span>
+                </div>
+                <div class="admin-nav-item" data-page="vip-users">
+                    <i class="fas fa-crown"></i>
+                    <span>VIP Users</span>
+                    <span class="admin-nav-badge" id="vipUsersBadge">0</span>
+                </div>
+                <div class="admin-nav-item" data-page="transactions">
+                    <i class="fas fa-history"></i>
+                    <span>All Transactions</span>
+                </div>
+                <div class="admin-nav-item" data-page="mining-sessions">
+                    <i class="fas fa-cog"></i>
+                    <span>Mining Sessions</span>
+                </div>
+                <div class="admin-nav-item" data-page="settings">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="admin-nav-item" data-page="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Dashboard Page -->
+            <div class="page-container active" id="dashboardPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Dashboard</h1>
+                    <button class="admin-logout-btn" onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Total Users</div>
+                        <div class="admin-stat-value" id="totalUsers">0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">VIP Users</div>
+                        <div class="admin-stat-value vip" id="totalVipUsers">0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Total Balance</div>
+                        <div class="admin-stat-value success" id="totalBalance">$0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Active Mining</div>
+                        <div class="admin-stat-value" id="activeMining">0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Pending Deposits</div>
+                        <div class="admin-stat-value warning" id="pendingDeposits">0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Pending Withdrawals</div>
+                        <div class="admin-stat-value danger" id="pendingWithdrawals">0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">Today's Earnings</div>
+                        <div class="admin-stat-value success" id="todayEarnings">$0</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-label">24h Earnings</div>
+                        <div class="admin-stat-value" id="dailyEarnings">$0</div>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <h3 style="margin-bottom: 16px;">Recent Activity</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivity">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading recent activity...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mining Plans Page -->
+            <div class="page-container" id="plansPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Mining Plans</h1>
+                    <button class="btn btn-primary" onclick="showPlanModal()" style="width: auto;">
+                        <i class="fas fa-plus"></i> Add New Plan
+                    </button>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Daily Return</th>
+                                <th>Duration</th>
+                                <th>Total Return</th>
+                                <th>Popular</th>
+                                <th>VIP Only</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plansTable">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading plans...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Deposit Requests Page -->
+            <div class="page-container" id="depositsPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Deposit Requests</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="loadDepositRequests()" style="width: auto;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <select class="form-input" id="depositFilter" style="width: auto;" onchange="filterDeposits()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Plan</th>
+                                <th>Transaction Hash</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="depositsTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading deposit requests...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Withdrawal Requests Page -->
+            <div class="page-container" id="withdrawalsPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Withdrawal Requests</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="loadWithdrawalRequests()" style="width: auto;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <select class="form-input" id="withdrawalFilter" style="width: auto;" onchange="filterWithdrawals()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Wallet Address</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading withdrawal requests...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Plan Purchases Page -->
+            <div class="page-container" id="planPurchasesPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Plan Purchases</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="loadPlanPurchases()" style="width: auto;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <select class="form-input" id="planPurchaseFilter" style="width: auto;" onchange="filterPlanPurchases()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Plan</th>
+                                <th>Price</th>
+                                <th>Daily Return</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="planPurchasesTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading plan purchases...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div class="page-container" id="usersPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Users Management</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="showUserModal()" style="width: auto;">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                        <button class="btn btn-success" onclick="exportUsers()" style="width: auto;">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <input type="text" class="form-input" placeholder="Search users..." id="userSearch" style="width: 300px;" onkeyup="searchUsers()">
+                        <select class="form-input" id="userFilter" style="width: auto;" onchange="filterUsers()">
+                            <option value="all">All Users</option>
+                            <option value="vip">VIP Users</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Balance</th>
+                                <th>VIP Level</th>
+                                <th>Active Plans</th>
+                                <th>Total Earned</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIP Users Page -->
+            <div class="page-container" id="vipUsersPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">VIP Users Management</h1>
+                    <button class="btn btn-vip" onclick="showVipModal()" style="width: auto;">
+                        <i class="fas fa-crown"></i> Assign VIP
+                    </button>
+                </div>
+
+                <div class="vip-filters">
+                    <button class="vip-filter-btn active" onclick="filterVipUsers('all')">All VIP</button>
+                    <button class="vip-filter-btn" onclick="filterVipUsers('gold')">Gold VIP</button>
+                    <button class="vip-filter-btn" onclick="filterVipUsers('silver')">Silver VIP</button>
+                    <button class="vip-filter-btn" onclick="filterVipUsers('bronze')">Bronze VIP</button>
+                </div>
+
+                <div class="vip-level-indicator">
+                    <div class="vip-level gold">Gold VIP: Daily Return +2%</div>
+                    <div class="vip-level silver">Silver VIP: Daily Return +1%</div>
+                    <div class="vip-level bronze">Bronze VIP: Daily Return +0.5%</div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>VIP Level</th>
+                                <th>Total Deposits</th>
+                                <th>Total Withdrawals</th>
+                                <th>Current Balance</th>
+                                <th>VIP Since</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vipUsersTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading VIP users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div class="page-container" id="transactionsPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">All Transactions</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="loadAllTransactions()" style="width: auto;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <input type="date" class="form-input" id="transactionDateFilter" style="width: auto;" onchange="filterTransactionsByDate()">
+                        <select class="form-input" id="transactionTypeFilter" style="width: auto;" onchange="filterTransactionsByType()">
+                            <option value="all">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="withdrawal">Withdrawals</option>
+                            <option value="mining">Mining</option>
+                            <option value="referral">Referral</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading transactions...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mining Sessions Page -->
+            <div class="page-container" id="miningSessionsPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Mining Sessions</h1>
+                    <button class="btn btn-primary" onclick="loadMiningSessions()" style="width: auto;">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Plan</th>
+                                <th>Daily Earnings</th>
+                                <th>Current Day</th>
+                                <th>Progress</th>
+                                <th>Next Payout</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="miningSessionsTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                    Loading mining sessions...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page-container" id="settingsPage">
+                <div class="admin-header-bar">
+                    <h1 class="admin-page-title">Settings</h1>
+                </div>
+
+                <div class="admin-table-container">
+                    <h3 style="margin-bottom: 16px;">System Settings</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Website Name</label>
+                        <input type="text" class="form-input" id="siteName" value="CryptoMine">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Minimum Deposit (USDT)</label>
+                        <input type="number" class="form-input" id="minDeposit" value="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Minimum Withdrawal (USDT)</label>
+                        <input type="number" class="form-input" id="minWithdrawal" value="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Fee (%)</label>
+                        <input type="number" class="form-input" id="withdrawalFee" value="2" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Referral Commission (%)</label>
+                        <input type="number" class="form-input" id="referralCommission" value="10" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">VIP Requirements</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+                            <div>
+                                <label class="form-label">Gold VIP (Total Deposit)</label>
+                                <input type="number" class="form-input" id="goldVipReq" value="10000" placeholder="Minimum $10,000">
+                            </div>
+                            <div>
+                                <label class="form-label">Silver VIP (Total Deposit)</label>
+                                <input type="number" class="form-input" id="silverVipReq" value="5000" placeholder="Minimum $5,000">
+                            </div>
+                            <div>
+                                <label class="form-label">Bronze VIP (Total Deposit)</label>
+                                <input type="number" class="form-input" id="bronzeVipReq" value="1000" placeholder="Minimum $1,000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveSettings()" style="width: auto;">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Plan Modal -->
+    <div class="modal-overlay" id="planModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="planModalTitle">Add New Plan</h3>
+                <button class="modal-close" onclick="closePlanModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Plan Name *</label>
+                <input type="text" class="form-input" id="planName" placeholder="e.g., Professional">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Price (USDT) *</label>
+                <input type="number" class="form-input" id="planPrice" placeholder="e.g., 100">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Daily Return (%) *</label>
+                <input type="number" class="form-input" id="planDailyReturn" placeholder="e.g., 2.0" step="0.1">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Duration (Days) *</label>
+                <input type="number" class="form-input" id="planDuration" placeholder="e.g., 30">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Total Return (%) *</label>
+                <input type="number" class="form-input" id="planTotalReturn" placeholder="e.g., 60" step="0.1">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Features (comma separated)</label>
+                <input type="text" class="form-input" id="planFeatures" placeholder="e.g., Daily withdrawals,24/7 Support">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="planPopular"> Mark as Popular
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <input type="checkbox" id="planVipOnly"> VIP Only Plan
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select class="form-input" id="planStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-primary" onclick="savePlan()" id="savePlanBtn">
+                    <span id="savePlanText">Save Plan</span>
+                    <span class="spinner" id="savePlanSpinner" style="display: none;"></span>
+                </button>
+                <button class="btn" onclick="closePlanModal()" style="background: var(--bg-secondary);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="userModalTitle">Add New User</h3>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-input" id="userEmail" placeholder="user@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Name *</label>
+                <input type="text" class="form-input" id="userName" placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Password *</label>
+                <input type="password" class="form-input" id="userPassword" placeholder="Enter password">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Initial Balance (USDT)</label>
+                <input type="number" class="form-input" id="userBalance" placeholder="0" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">VIP Level</label>
+                <select class="form-input" id="userVipLevel">
+                    <option value="none">None</option>
+                    <option value="bronze">Bronze</option>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Referral Code (Auto-generate if empty)</label>
+                <input type="text" class="form-input" id="userReferralCode" placeholder="e.g., CMREF123">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Referred By (Optional)</label>
+                <input type="text" class="form-input" id="userReferredBy" placeholder="Referral code">
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">
+                    <span id="saveUserText">Save User</span>
+                    <span class="spinner" id="saveUserSpinner" style="display: none;"></span>
+                </button>
+                <button class="btn" onclick="closeUserModal()" style="background: var(--bg-secondary);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIP Modal -->
+    <div class="modal-overlay" id="vipModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Assign VIP Status</h3>
+                <button class="modal-close" onclick="closeVipModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Select User</label>
+                <select class="form-input" id="vipUserSelect">
+                    <option value="">Select a user</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">VIP Level</label>
+                <select class="form-input" id="vipLevelSelect">
+                    <option value="bronze">Bronze VIP (+0.5% Daily Bonus)</option>
+                    <option value="silver">Silver VIP (+1% Daily Bonus)</option>
+                    <option value="gold">Gold VIP (+2% Daily Bonus)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">VIP Expiry Date (Optional)</label>
+                <input type="date" class="form-input" id="vipExpiryDate">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-input" id="vipNotes" placeholder="Reason for VIP assignment..." rows="3"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-vip" onclick="assignVip()" id="assignVipBtn">
+                    <span id="assignVipText">Assign VIP</span>
+                    <span class="spinner" id="assignVipSpinner" style="display: none;"></span>
+                </button>
+                <button class="btn" onclick="closeVipModal()" style="background: var(--bg-secondary);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="actionModalTitle">Approve Request</h3>
+                <button class="modal-close" onclick="closeActionModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Item ID</label>
+                <input type="text" class="form-input" id="actionItemId" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">User</label>
+                <input type="text" class="form-input" id="actionUser" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Amount</label>
+                <input type="text" class="form-input" id="actionAmount" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <input type="text" class="form-input" id="actionType" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea class="form-input" id="adminNotes" placeholder="Add notes about this action..." rows="3"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-success" onclick="confirmAction('approve')" id="approveBtn">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-danger" onclick="confirmAction('reject')" id="rejectBtn">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+                <button class="btn" onclick="closeActionModal()" style="background: var(--bg-secondary);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"><i class="fas fa-check-circle"></i></span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ✅ Supabase Configuration
+        const SUPABASE_URL = 'https://rgnxujdxhrcdpippsxvg.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnh1amR4aHJjZHBpcHBzeHZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4Njk5NDIsImV4cCI6MjA4MTQ0NTk0Mn0.LsLrVczLBw-8jfYHYz2eyvQidgRSzPVDui53UbzC2oQ';
+        
+        // Create admin client
+        const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Admin State
+        let adminUser = null;
+        let currentAction = null;
+        let currentItemId = null;
+        let currentItemType = null;
+        let currentItemData = null;
+        let realTimeInterval = null;
+        let allUsersCache = [];
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if admin is already logged in
+            const adminToken = localStorage.getItem('adminToken');
+            if (adminToken) {
+                await verifyAdminToken(adminToken);
+            }
+            
+            // Add enter key listeners
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') adminLogin();
+            });
+            
+            // Add click events to nav items
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                if (!item.dataset.page) return;
+                
+                item.addEventListener('click', function() {
+                    const page = this.dataset.page;
+                    if (page === 'logout') {
+                        adminLogout();
+                    } else {
+                        showAdminPage(page);
+                    }
+                });
+            });
+        });
+
+        // ✅ Admin Login Function
+      window.adminLogin = async function() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const errorDiv = document.getElementById('adminError');
+    const btnText = document.getElementById('loginBtnText');
+    const spinner = document.getElementById('loginSpinner');
+    
+    if (!email || !password) {
+        errorDiv.textContent = 'Please enter email and password';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    // Show loading
+    btnText.style.display = 'none';
+    spinner.style.display = 'inline-block';
+    
+    try {
+        // ✅ Check in admin_users table (plain text password)
+        const { data: admin, error: adminError } = await supabaseAdmin
+            .from('admin_users')
+            .select('*')
+            .eq('email', email)
+            .eq('password', password)
+            .single();
+        
+        if (adminError || !admin) {
+            throw new Error('Invalid admin credentials');
+        }
+        
+        adminUser = admin;
+        
+        // Create admin session
+        const token = btoa(JSON.stringify({
+            id: admin.id,
+            email: admin.email,
+            role: admin.role,
+            timestamp: Date.now()
+        }));
+        
+        localStorage.setItem('adminToken', token);
+        
+        // Show admin panel
+        showAdminPanel();
+        showToast('Admin login successful!');
+        
+        // Load initial data
+        await loadDashboardStats();
+        await loadPlans();
+        await loadPendingCounts();
+        await startRealTimeUpdates();
+        
+    } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.add('show');
+    } finally {
+        // Hide loading
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+    }
+};
+
+        async function verifyAdminToken(token) {
+            try {
+                const adminData = JSON.parse(atob(token));
+                
+                // Check if token is expired (24 hours)
+                if (Date.now() - adminData.timestamp > 24 * 60 * 60 * 1000) {
+                    throw new Error('Session expired');
+                }
+                
+                // Check in admin_users table
+                const { data: admin, error: adminError } = await supabaseAdmin
+                    .from('admin_users')
+                    .select('*')
+                    .eq('email', adminData.email)
+                    .single();
+                
+                if (adminError || !admin) {
+                    // Check in users table
+                    const { data: userAdmin, error: userError } = await supabaseAdmin
+                        .from('users')
+                        .select('*')
+                        .eq('email', adminData.email)
+                        .eq('role', 'admin')
+                        .single();
+                    
+                    if (userError || !userAdmin) {
+                        throw new Error('Invalid session');
+                    }
+                    
+                    adminUser = userAdmin;
+                } else {
+                    adminUser = admin;
+                }
+                
+                showAdminPanel();
+                await loadDashboardStats();
+                await loadPlans();
+                await loadPendingCounts();
+                await startRealTimeUpdates();
+                
+            } catch (error) {
+                localStorage.removeItem('adminToken');
+                showAuthPage();
+            }
+        }
+
+        function showAuthPage() {
+            document.getElementById('adminAuth').style.display = 'flex';
+            document.getElementById('adminPanel').classList.remove('active');
+            if (realTimeInterval) {
+                clearInterval(realTimeInterval);
+                realTimeInterval = null;
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminAuth').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('active');
+            showAdminPage('dashboard');
+        }
+
+        window.adminLogout = function() {
+            localStorage.removeItem('adminToken');
+            adminUser = null;
+            if (realTimeInterval) {
+                clearInterval(realTimeInterval);
+                realTimeInterval = null;
+            }
+            showAuthPage();
+            showToast('Logged out successfully');
+        };
+
+        function showAdminPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-container').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            let pageElementId;
+            switch(pageId) {
+                case 'dashboard': pageElementId = 'dashboardPage'; break;
+                case 'plans': pageElementId = 'plansPage'; break;
+                case 'deposits': pageElementId = 'depositsPage'; break;
+                case 'withdrawals': pageElementId = 'withdrawalsPage'; break;
+                case 'plan-purchases': pageElementId = 'planPurchasesPage'; break;
+                case 'users': pageElementId = 'usersPage'; break;
+                case 'vip-users': pageElementId = 'vipUsersPage'; break;
+                case 'transactions': pageElementId = 'transactionsPage'; break;
+                case 'mining-sessions': pageElementId = 'miningSessionsPage'; break;
+                case 'settings': pageElementId = 'settingsPage'; break;
+                default: return;
+            }
+            
+            document.getElementById(pageElementId).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Load page data
+            switch(pageId) {
+                case 'dashboard':
+                    loadDashboardStats();
+                    loadRecentActivity();
+                    break;
+                case 'plans':
+                    loadPlans();
+                    break;
+                case 'deposits':
+                    loadDepositRequests();
+                    break;
+                case 'withdrawals':
+                    loadWithdrawalRequests();
+                    break;
+                case 'plan-purchases':
+                    loadPlanPurchases();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'vip-users':
+                    loadVipUsers();
+                    break;
+                case 'transactions':
+                    loadAllTransactions();
+                    break;
+                case 'mining-sessions':
+                    loadMiningSessions();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+            
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                toggleAdminSidebar();
+            }
+        }
+
+        window.toggleAdminSidebar = function() {
+            document.getElementById('adminSidebar').classList.toggle('show');
+        };
+
+        // ✅ REAL-TIME UPDATES
+        async function startRealTimeUpdates() {
+            if (realTimeInterval) {
+                clearInterval(realTimeInterval);
+            }
+            
+            // Check for new requests every 10 seconds
+            realTimeInterval = setInterval(async () => {
+                await checkNewRequests();
+                await loadPendingCounts();
+                
+                // If on dashboard, refresh stats
+                if (document.getElementById('dashboardPage').classList.contains('active')) {
+                    await loadDashboardStats();
+                    await loadRecentActivity();
+                }
+                
+                // Refresh current page data
+                const activePage = document.querySelector('.page-container.active').id;
+                switch(activePage) {
+                    case 'depositsPage':
+                        await loadDepositRequests();
+                        break;
+                    case 'withdrawalsPage':
+                        await loadWithdrawalRequests();
+                        break;
+                    case 'planPurchasesPage':
+                        await loadPlanPurchases();
+                        break;
+                    case 'usersPage':
+                        await loadUsers();
+                        break;
+                    case 'vipUsersPage':
+                        await loadVipUsers();
+                        break;
+                    case 'transactionsPage':
+                        await loadAllTransactions();
+                        break;
+                    case 'miningSessionsPage':
+                        await loadMiningSessions();
+                        break;
+                }
+                
+            }, 10000); // 10 seconds
+        }
+
+        async function checkNewRequests() {
+            try {
+                // Check for new deposit requests (last 1 minute)
+                const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
+                
+                const { data: newDeposits } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*, users(name)')
+                    .eq('status', 'pending')
+                    .gt('created_at', oneMinuteAgo);
+                
+                if (newDeposits && newDeposits.length > 0) {
+                    newDeposits.forEach(deposit => {
+                        showRealTimeNotification(
+                            'New Deposit Request',
+                            `${deposit.users?.name || deposit.user_id} requested $${deposit.amount} deposit`
+                        );
+                    });
+                }
+                
+                // Check for new withdrawal requests
+                const { data: newWithdrawals } = await supabaseAdmin
+                    .from('withdrawal_requests')
+                    .select('*, users(name)')
+                    .eq('status', 'pending')
+                    .gt('created_at', oneMinuteAgo);
+                
+                if (newWithdrawals && newWithdrawals.length > 0) {
+                    newWithdrawals.forEach(withdrawal => {
+                        showRealTimeNotification(
+                            'New Withdrawal Request',
+                            `${withdrawal.users?.name || withdrawal.user_id} requested $${withdrawal.amount} withdrawal`
+                        );
+                    });
+                }
+                
+                // Check for mining completions
+                const { data: miningCompletions } = await supabaseAdmin
+                    .from('transactions')
+                    .select('*, users(name)')
+                    .eq('type', 'mining')
+                    .gt('created_at', oneMinuteAgo);
+                
+                if (miningCompletions && miningCompletions.length > 0) {
+                    miningCompletions.forEach(tx => {
+                        showRealTimeNotification(
+                            'Mining Completed',
+                            `${tx.users?.name || tx.user_id} earned $${tx.amount} from mining`
+                        );
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error checking new requests:', error);
+            }
+        }
+
+        function showRealTimeNotification(title, message) {
+            const notification = document.getElementById('realTimeNotification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            
+            notification.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // ✅ Dashboard Stats
+        async function loadDashboardStats() {
+            try {
+                // Total users
+                const { count: totalUsers } = await supabaseAdmin
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .neq('role', 'admin');
+                
+                // VIP users
+                const { count: vipUsers } = await supabaseAdmin
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .in('vip_level', ['bronze', 'silver', 'gold']);
+                
+                // Total balance
+                const { data: users } = await supabaseAdmin
+                    .from('users')
+                    .select('balance')
+                    .neq('role', 'admin');
+                const totalBalance = users ? users.reduce((sum, user) => sum + (parseFloat(user.balance) || 0), 0) : 0;
+                
+                // Active mining sessions
+                const { count: activeMining } = await supabaseAdmin
+                    .from('mining_sessions')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_active', true);
+                
+                // Pending deposits
+                const { count: pendingDeposits } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                
+                // Pending withdrawals
+                const { count: pendingWithdrawals } = await supabaseAdmin
+                    .from('withdrawal_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                
+                // Today's earnings
+                const today = new Date().toISOString().split('T')[0];
+                const { data: todayTransactions } = await supabaseAdmin
+                    .from('transactions')
+                    .select('amount')
+                    .eq('type', 'mining')
+                    .gte('created_at', today);
+                const todayEarnings = todayTransactions ? 
+                    todayTransactions.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0) : 0;
+                
+                // 24h earnings
+                const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+                const { data: dailyTransactions } = await supabaseAdmin
+                    .from('transactions')
+                    .select('amount')
+                    .eq('type', 'mining')
+                    .gte('created_at', yesterday);
+                const dailyEarnings = dailyTransactions ? 
+                    dailyTransactions.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0) : 0;
+                
+                // Update UI
+                document.getElementById('totalUsers').textContent = totalUsers || 0;
+                document.getElementById('totalVipUsers').textContent = vipUsers || 0;
+                document.getElementById('totalBalance').textContent = '$' + totalBalance.toFixed(2);
+                document.getElementById('activeMining').textContent = activeMining || 0;
+                document.getElementById('pendingDeposits').textContent = pendingDeposits || 0;
+                document.getElementById('pendingWithdrawals').textContent = pendingWithdrawals || 0;
+                document.getElementById('todayEarnings').textContent = '$' + todayEarnings.toFixed(2);
+                document.getElementById('dailyEarnings').textContent = '$' + dailyEarnings.toFixed(2);
+                
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                // Get recent transactions
+                const { data: transactions } = await supabaseAdmin
+                    .from('transactions')
+                    .select('*, users(name)')
+                    .order('created_at', { ascending: false })
+                    .limit(15);
+                
+                const container = document.getElementById('recentActivity');
+                
+                if (!transactions || transactions.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No recent activity
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                transactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    
+                    let typeBadge = '';
+                    switch(tx.type) {
+                        case 'mining': typeBadge = '<span class="status-badge status-approved">Mining</span>'; break;
+                        case 'deposit': typeBadge = '<span class="status-badge status-success">Deposit</span>'; break;
+                        case 'withdrawal': typeBadge = '<span class="status-badge status-warning">Withdrawal</span>'; break;
+                        case 'referral': typeBadge = '<span class="status-badge status-info">Referral</span>'; break;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${tx.users?.name || tx.user_id}</td>
+                        <td>${typeBadge}</td>
+                        <td>$${parseFloat(tx.amount).toFixed(2)}</td>
+                        <td><span class="status-badge status-approved">Completed</span></td>
+                        <td>${new Date(tx.created_at).toLocaleString()}</td>
+                        <td>
+                            <button class="action-btn action-view" onclick="viewTransaction('${tx.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+
+        async function loadPendingCounts() {
+            try {
+                // Pending deposits count
+                const { count: pendingDeposits } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                
+                // Pending withdrawals count
+                const { count: pendingWithdrawals } = await supabaseAdmin
+                    .from('withdrawal_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                
+                // Pending plan purchases count
+                const { count: pendingPlans } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending')
+                    .not('plan_id', 'is', null);
+                
+                // VIP users count
+                const { count: vipUsers } = await supabaseAdmin
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .in('vip_level', ['bronze', 'silver', 'gold']);
+                
+                // Update badge counts
+                document.getElementById('pendingDepositsBadge').textContent = pendingDeposits || 0;
+                document.getElementById('pendingWithdrawalsBadge').textContent = pendingWithdrawals || 0;
+                document.getElementById('pendingPlansBadge').textContent = pendingPlans || 0;
+                document.getElementById('vipUsersBadge').textContent = vipUsers || 0;
+                
+            } catch (error) {
+                console.error('Error loading pending counts:', error);
+            }
+        }
+
+        // ✅ Mining Plans Management
+        async function loadPlans() {
+            try {
+                const { data: plans } = await supabaseAdmin
+                    .from('mining_plans')
+                    .select('*')
+                    .order('price', { ascending: true });
+                
+                const container = document.getElementById('plansTable');
+                
+                if (!plans || plans.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No plans found. Click "Add New Plan" to create one.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                plans.forEach(plan => {
+                    const row = document.createElement('tr');
+                    
+                    const statusBadge = plan.status === 'active' ? 
+                        `<span class="status-badge status-active">Active</span>` :
+                        `<span class="status-badge status-inactive">Inactive</span>`;
+                    
+                    const popularBadge = plan.popular ? 
+                        `<span class="status-badge status-pending">Popular</span>` :
+                        `-`;
+                    
+                    const vipOnlyBadge = plan.vip_only ? 
+                        `<span class="vip-badge vip-gold">VIP Only</span>` :
+                        `-`;
+                    
+                    row.innerHTML = `
+                        <td>${plan.id.substring(0, 8)}...</td>
+                        <td>${plan.name}</td>
+                        <td>$${parseFloat(plan.price).toFixed(2)}</td>
+                        <td>${parseFloat(plan.daily_return).toFixed(1)}%</td>
+                        <td>${plan.duration} days</td>
+                        <td>${parseFloat(plan.total_return).toFixed(1)}%</td>
+                        <td>${popularBadge}</td>
+                        <td>${vipOnlyBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-edit" onclick="editPlan('${plan.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn action-delete" onclick="deletePlan('${plan.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        }
+
+        window.showPlanModal = function(planId = null) {
+            const modal = document.getElementById('planModal');
+            const title = document.getElementById('planModalTitle');
+            
+            if (planId) {
+                title.textContent = 'Edit Plan';
+                currentItemId = planId;
+                loadPlanData(planId);
+            } else {
+                title.textContent = 'Add New Plan';
+                currentItemId = null;
+                clearPlanForm();
+            }
+            
+            modal.classList.add('active');
+        };
+
+        window.closePlanModal = function() {
+            document.getElementById('planModal').classList.remove('active');
+            currentItemId = null;
+        };
+
+        async function loadPlanData(planId) {
+            try {
+                const { data: plan } = await supabaseAdmin
+                    .from('mining_plans')
+                    .select('*')
+                    .eq('id', planId)
+                    .single();
+                
+                document.getElementById('planName').value = plan.name;
+                document.getElementById('planPrice').value = plan.price;
+                document.getElementById('planDailyReturn').value = plan.daily_return;
+                document.getElementById('planDuration').value = plan.duration;
+                document.getElementById('planTotalReturn').value = plan.total_return;
+                document.getElementById('planFeatures').value = plan.features || '';
+                document.getElementById('planPopular').checked = plan.popular;
+                document.getElementById('planVipOnly').checked = plan.vip_only || false;
+                document.getElementById('planStatus').value = plan.status;
+                
+            } catch (error) {
+                console.error('Error loading plan data:', error);
+                showToast('Error loading plan data', 'error');
+            }
+        }
+
+        function clearPlanForm() {
+            document.getElementById('planName').value = '';
+            document.getElementById('planPrice').value = '';
+            document.getElementById('planDailyReturn').value = '';
+            document.getElementById('planDuration').value = '';
+            document.getElementById('planTotalReturn').value = '';
+            document.getElementById('planFeatures').value = '';
+            document.getElementById('planPopular').checked = false;
+            document.getElementById('planVipOnly').checked = false;
+            document.getElementById('planStatus').value = 'active';
+        }
+
+        window.savePlan = async function() {
+            const name = document.getElementById('planName').value.trim();
+            const price = parseFloat(document.getElementById('planPrice').value);
+            const dailyReturn = parseFloat(document.getElementById('planDailyReturn').value);
+            const duration = parseInt(document.getElementById('planDuration').value);
+            const totalReturn = parseFloat(document.getElementById('planTotalReturn').value);
+            const features = document.getElementById('planFeatures').value.trim();
+            const popular = document.getElementById('planPopular').checked;
+            const vipOnly = document.getElementById('planVipOnly').checked;
+            const status = document.getElementById('planStatus').value;
+            
+            if (!name || !price || !dailyReturn || !duration || !totalReturn) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const btnText = document.getElementById('savePlanText');
+            const spinner = document.getElementById('savePlanSpinner');
+            
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            
+            try {
+                const planData = {
+                    name: name,
+                    price: price,
+                    daily_return: dailyReturn,
+                    duration: duration,
+                    total_return: totalReturn,
+                    features: features || null,
+                    popular: popular,
+                    vip_only: vipOnly,
+                    status: status
+                };
+                
+                if (currentItemId) {
+                    await supabaseAdmin
+                        .from('mining_plans')
+                        .update(planData)
+                        .eq('id', currentItemId);
+                    showToast('Plan updated successfully!');
+                } else {
+                    await supabaseAdmin
+                        .from('mining_plans')
+                        .insert(planData);
+                    showToast('Plan added successfully!');
+                }
+                
+                closePlanModal();
+                await loadPlans();
+                
+            } catch (error) {
+                console.error('Error saving plan:', error);
+                showToast('Error saving plan: ' + error.message, 'error');
+            } finally {
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        };
+
+        window.deletePlan = async function(planId) {
+            if (!confirm('Are you sure you want to delete this plan? This action cannot be undone.')) return;
+            
+            try {
+                await supabaseAdmin
+                    .from('mining_plans')
+                    .delete()
+                    .eq('id', planId);
+                
+                showToast('Plan deleted successfully!');
+                await loadPlans();
+                
+            } catch (error) {
+                console.error('Error deleting plan:', error);
+                showToast('Error deleting plan: ' + error.message, 'error');
+            }
+        };
+
+        // ✅ DEPOSIT REQUESTS Management
+        window.loadDepositRequests = async function() {
+            try {
+                const filter = document.getElementById('depositFilter').value;
+                
+                let query = supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*, users(name, email, vip_level)')
+                    .order('created_at', { ascending: false });
+                
+                if (filter !== 'all') {
+                    query = query.eq('status', filter);
+                }
+                
+                const { data: deposits } = await query;
+                
+                const container = document.getElementById('depositsTable');
+                
+                if (!deposits || deposits.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No deposit requests found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                deposits.forEach(deposit => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    let actions = '';
+                    
+                    if (deposit.status === 'pending') {
+                        statusBadge = `<span class="status-badge status-pending">Pending</span>`;
+                        actions = `
+                            <div class="action-buttons">
+                                <button class="action-btn action-approve" onclick="showActionModal('deposit', '${deposit.id}', '${deposit.user_id}', '${deposit.amount}', 'approve')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn action-reject" onclick="showActionModal('deposit', '${deposit.id}', '${deposit.user_id}', '${deposit.amount}', 'reject')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="action-btn action-view" onclick="viewDepositDetails('${deposit.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else if (deposit.status === 'approved') {
+                        statusBadge = `<span class="status-badge status-approved">Approved</span>`;
+                        actions = `<div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewDepositDetails('${deposit.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>`;
+                    } else {
+                        statusBadge = `<span class="status-badge status-rejected">Rejected</span>`;
+                        actions = `<div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewDepositDetails('${deposit.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>`;
+                    }
+                    
+                    const vipBadge = deposit.users?.vip_level && deposit.users.vip_level !== 'none' ? 
+                        `<span class="vip-badge vip-${deposit.users.vip_level}">${deposit.users.vip_level.toUpperCase()}</span>` :
+                        '';
+                    
+                    const planInfo = deposit.plan_id ? 
+                        `<div style="font-size: 12px; color: var(--accent);">${deposit.plan_name || 'Plan'}</div>` :
+                        '';
+                    
+                    row.innerHTML = `
+                        <td>${deposit.id.substring(0, 8)}...</td>
+                        <td>
+                            <div style="font-weight: 500;">${deposit.users?.name || deposit.user_id}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${deposit.user_id}</div>
+                            ${vipBadge}
+                        </td>
+                        <td>$${parseFloat(deposit.amount).toFixed(2)}</td>
+                        <td>${planInfo}</td>
+                        <td title="${deposit.transaction_hash}">
+                            <small style="cursor: pointer;" onclick="copyToClipboard('${deposit.transaction_hash}')">
+                                ${deposit.transaction_hash.substring(0, 20)}...
+                            </small>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>${new Date(deposit.created_at).toLocaleString()}</td>
+                        <td>${actions}</td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading deposit requests:', error);
+                showToast('Error loading deposit requests', 'error');
+            }
+        };
+
+        window.filterDeposits = function() {
+            loadDepositRequests();
+        };
+
+        // ✅ WITHDRAWAL REQUESTS Management
+        window.loadWithdrawalRequests = async function() {
+            try {
+                const filter = document.getElementById('withdrawalFilter').value;
+                
+                let query = supabaseAdmin
+                    .from('withdrawal_requests')
+                    .select('*, users(name, email, vip_level)')
+                    .order('created_at', { ascending: false });
+                
+                if (filter !== 'all') {
+                    query = query.eq('status', filter);
+                }
+                
+                const { data: withdrawals } = await query;
+                
+                const container = document.getElementById('withdrawalsTable');
+                
+                if (!withdrawals || withdrawals.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No withdrawal requests found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                withdrawals.forEach(withdrawal => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    let actions = '';
+                    
+                    if (withdrawal.status === 'pending') {
+                        statusBadge = `<span class="status-badge status-pending">Pending</span>`;
+                        actions = `
+                            <div class="action-buttons">
+                                <button class="action-btn action-approve" onclick="showActionModal('withdrawal', '${withdrawal.id}', '${withdrawal.user_id}', '${withdrawal.amount}', 'approve')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn action-reject" onclick="showActionModal('withdrawal', '${withdrawal.id}', '${withdrawal.user_id}', '${withdrawal.amount}', 'reject')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="action-btn action-view" onclick="viewWithdrawalDetails('${withdrawal.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else if (withdrawal.status === 'approved') {
+                        statusBadge = `<span class="status-badge status-approved">Approved</span>`;
+                        actions = `<div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewWithdrawalDetails('${withdrawal.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>`;
+                    } else {
+                        statusBadge = `<span class="status-badge status-rejected">Rejected</span>`;
+                        actions = `<div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewWithdrawalDetails('${withdrawal.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>`;
+                    }
+                    
+                    const vipBadge = withdrawal.users?.vip_level && withdrawal.users.vip_level !== 'none' ? 
+                        `<span class="vip-badge vip-${withdrawal.users.vip_level}">${withdrawal.users.vip_level.toUpperCase()}</span>` :
+                        '';
+                    
+                    row.innerHTML = `
+                        <td>${withdrawal.id.substring(0, 8)}...</td>
+                        <td>
+                            <div style="font-weight: 500;">${withdrawal.users?.name || withdrawal.user_id}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${withdrawal.user_id}</div>
+                            ${vipBadge}
+                        </td>
+                        <td>$${parseFloat(withdrawal.amount).toFixed(2)}</td>
+                        <td title="${withdrawal.wallet_address}">
+                            <small style="cursor: pointer;" onclick="copyToClipboard('${withdrawal.wallet_address}')">
+                                ${withdrawal.wallet_address.substring(0, 20)}...
+                            </small>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>${new Date(withdrawal.created_at).toLocaleString()}</td>
+                        <td>${actions}</td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading withdrawal requests:', error);
+                showToast('Error loading withdrawal requests', 'error');
+            }
+        };
+
+        window.filterWithdrawals = function() {
+            loadWithdrawalRequests();
+        };
+
+        // ✅ PLAN PURCHASES Management
+        window.loadPlanPurchases = async function() {
+            try {
+                const filter = document.getElementById('planPurchaseFilter').value;
+                
+                let query = supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*, users(name, email, vip_level)')
+                    .not('plan_id', 'is', null)
+                    .order('created_at', { ascending: false });
+                
+                if (filter !== 'all') {
+                    query = query.eq('status', filter);
+                }
+                
+                const { data: purchases } = await query;
+                
+                const container = document.getElementById('planPurchasesTable');
+                
+                if (!purchases || purchases.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No plan purchases found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                purchases.forEach(purchase => {
+                    const row = document.createElement('tr');
+                    
+                    let statusBadge = '';
+                    let actions = '';
+                    
+                    if (purchase.status === 'pending') {
+                        statusBadge = `<span class="status-badge status-pending">Pending</span>`;
+                        actions = `
+                            <div class="action-buttons">
+                                <button class="action-btn action-approve" onclick="approvePlanPurchase('${purchase.id}')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn action-reject" onclick="showActionModal('deposit', '${purchase.id}', '${purchase.user_id}', '${purchase.amount}', 'reject')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            </div>
+                        `;
+                    } else if (purchase.status === 'approved') {
+                        statusBadge = `<span class="status-badge status-approved">Approved</span>`;
+                        actions = `<span style="color: var(--text-secondary);">Active</span>`;
+                    } else {
+                        statusBadge = `<span class="status-badge status-rejected">Rejected</span>`;
+                        actions = `<span style="color: var(--text-secondary);">Rejected</span>`;
+                    }
+                    
+                    const vipBadge = purchase.users?.vip_level && purchase.users.vip_level !== 'none' ? 
+                        `<span class="vip-badge vip-${purchase.users.vip_level}">${purchase.users.vip_level.toUpperCase()}</span>` :
+                        '';
+                    
+                    row.innerHTML = `
+                        <td>${purchase.id.substring(0, 8)}...</td>
+                        <td>
+                            <div style="font-weight: 500;">${purchase.users?.name || purchase.user_id}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${purchase.user_id}</div>
+                            ${vipBadge}
+                        </td>
+                        <td>${purchase.plan_name}</td>
+                        <td>$${parseFloat(purchase.amount).toFixed(2)}</td>
+                        <td>${parseFloat(purchase.daily_return).toFixed(1)}%</td>
+                        <td>${purchase.duration} days</td>
+                        <td>${statusBadge}</td>
+                        <td>${new Date(purchase.created_at).toLocaleString()}</td>
+                        <td>${actions}</td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading plan purchases:', error);
+                showToast('Error loading plan purchases', 'error');
+            }
+        };
+
+        window.filterPlanPurchases = function() {
+            loadPlanPurchases();
+        };
+
+        // ✅ USERS Management
+        async function loadAllUsers() {
+            try {
+                const { data: users } = await supabaseAdmin
+                    .from('users')
+                    .select('*')
+                    .neq('role', 'admin')
+                    .order('created_at', { ascending: false });
+                
+                allUsersCache = users || [];
+                return allUsersCache;
+            } catch (error) {
+                console.error('Error loading users:', error);
+                return [];
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await loadAllUsers();
+                const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+                const filter = document.getElementById('userFilter').value;
+                
+                let filteredUsers = users;
+                
+                // Apply search filter
+                if (searchTerm) {
+                    filteredUsers = filteredUsers.filter(user => 
+                        user.email.toLowerCase().includes(searchTerm) || 
+                        user.name.toLowerCase().includes(searchTerm) ||
+                        (user.referral_code && user.referral_code.toLowerCase().includes(searchTerm))
+                    );
+                }
+                
+                // Apply status filter
+                if (filter === 'vip') {
+                    filteredUsers = filteredUsers.filter(user => 
+                        user.vip_level && user.vip_level !== 'none'
+                    );
+                } else if (filter === 'active') {
+                    filteredUsers = filteredUsers.filter(user => 
+                        parseInt(user.active_plans) > 0
+                    );
+                } else if (filter === 'inactive') {
+                    filteredUsers = filteredUsers.filter(user => 
+                        parseInt(user.active_plans) === 0
+                    );
+                }
+                
+                const container = document.getElementById('usersTable');
+                
+                if (!filteredUsers || filteredUsers.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No users found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                filteredUsers.forEach(user => {
+                    const row = document.createElement('tr');
+                    
+                    let vipBadge = '';
+                    if (user.vip_level && user.vip_level !== 'none') {
+                        vipBadge = `<span class="vip-badge vip-${user.vip_level}">${user.vip_level.toUpperCase()}</span>`;
+                    } else {
+                        vipBadge = '<span style="color: var(--text-secondary);">None</span>';
+                    }
+                    
+                    const statusBadge = parseInt(user.active_plans) > 0 ? 
+                        `<span class="status-badge status-active">Active</span>` :
+                        `<span class="status-badge status-inactive">Inactive</span>`;
+                    
+                    row.innerHTML = `
+                        <td>${user.email}</td>
+                        <td>${user.name}</td>
+                        <td>$${parseFloat(user.balance || 0).toFixed(2)}</td>
+                        <td>${vipBadge}</td>
+                        <td>${user.active_plans || 0}</td>
+                        <td>$${parseFloat(user.total_earnings || 0).toFixed(2)}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-edit" onclick="editUser('${user.email}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn ${user.vip_level === 'gold' ? 'btn-vip' : 'action-view'}" onclick="manageUserVip('${user.email}')">
+                                    <i class="fas fa-crown"></i>
+                                </button>
+                                <button class="action-btn action-view" onclick="viewUserDetails('${user.email}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        window.searchUsers = function() {
+            loadUsers();
+        };
+
+        window.filterUsers = function() {
+            loadUsers();
+        };
+
+        // ✅ VIP USERS Management
+        async function loadVipUsers() {
+            try {
+                const { data: users } = await supabaseAdmin
+                    .from('users')
+                    .select('*')
+                    .in('vip_level', ['bronze', 'silver', 'gold'])
+                    .order('created_at', { ascending: false });
+                
+                const container = document.getElementById('vipUsersTable');
+                
+                if (!users || users.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No VIP users found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                // Get user transactions for total deposits/withdrawals
+                for (const user of users) {
+                    const { data: deposits } = await supabaseAdmin
+                        .from('deposit_requests')
+                        .select('amount')
+                        .eq('user_id', user.email)
+                        .eq('status', 'approved');
+                    
+                    const { data: withdrawals } = await supabaseAdmin
+                        .from('withdrawal_requests')
+                        .select('amount')
+                        .eq('user_id', user.email)
+                        .eq('status', 'approved');
+                    
+                    const totalDeposits = deposits ? deposits.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0) : 0;
+                    const totalWithdrawals = withdrawals ? withdrawals.reduce((sum, w) => sum + (parseFloat(w.amount) || 0), 0) : 0;
+                    
+                    const row = document.createElement('tr');
+                    
+                    let vipLevelBadge = '';
+                    switch(user.vip_level) {
+                        case 'gold':
+                            vipLevelBadge = `<span class="vip-badge vip-gold">Gold VIP</span>`;
+                            break;
+                        case 'silver':
+                            vipLevelBadge = `<span class="vip-badge vip-silver">Silver VIP</span>`;
+                            break;
+                        case 'bronze':
+                            vipLevelBadge = `<span class="vip-badge vip-bronze">Bronze VIP</span>`;
+                            break;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div style="font-weight: 500;">${user.name}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${user.email}</div>
+                        </td>
+                        <td>${vipLevelBadge}</td>
+                        <td>$${totalDeposits.toFixed(2)}</td>
+                        <td>$${totalWithdrawals.toFixed(2)}</td>
+                        <td>$${parseFloat(user.balance || 0).toFixed(2)}</td>
+                        <td>${user.vip_since ? new Date(user.vip_since).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-edit" onclick="editUserVip('${user.email}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="action-btn action-delete" onclick="removeVipStatus('${user.email}')">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                }
+                
+            } catch (error) {
+                console.error('Error loading VIP users:', error);
+            }
+        }
+
+        window.filterVipUsers = function(level) {
+            const rows = document.querySelectorAll('#vipUsersTable tr');
+            rows.forEach(row => {
+                if (row.cells[1]) {
+                    const vipLevel = row.cells[1].textContent.toLowerCase();
+                    if (level === 'all' || vipLevel.includes(level)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Update filter buttons
+            document.querySelectorAll('.vip-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        };
+
+        window.showVipModal = async function() {
+            const modal = document.getElementById('vipModal');
+            const select = document.getElementById('vipUserSelect');
+            
+            // Load users
+            const users = await loadAllUsers();
+            select.innerHTML = '<option value="">Select a user</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.email;
+                option.textContent = `${user.name} (${user.email}) - Balance: $${parseFloat(user.balance || 0).toFixed(2)}`;
+                select.appendChild(option);
+            });
+            
+            modal.classList.add('active');
+        };
+
+        window.closeVipModal = function() {
+            document.getElementById('vipModal').classList.remove('active');
+        };
+
+        window.assignVip = async function() {
+            const userEmail = document.getElementById('vipUserSelect').value;
+            const vipLevel = document.getElementById('vipLevelSelect').value;
+            const expiryDate = document.getElementById('vipExpiryDate').value;
+            const notes = document.getElementById('vipNotes').value.trim();
+            
+            if (!userEmail) {
+                showToast('Please select a user', 'error');
+                return;
+            }
+            
+            const btnText = document.getElementById('assignVipText');
+            const spinner = document.getElementById('assignVipSpinner');
+            
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            
+            try {
+                const updateData = {
+                    vip_level: vipLevel,
+                    vip_since: new Date().toISOString(),
+                    vip_notes: notes || null
+                };
+                
+                if (expiryDate) {
+                    updateData.vip_expiry = expiryDate;
+                }
+                
+                await supabaseAdmin
+                    .from('users')
+                    .update(updateData)
+                    .eq('email', userEmail);
+                
+                // Add VIP transaction
+                await supabaseAdmin
+                    .from('transactions')
+                    .insert({
+                        user_id: userEmail,
+                        type: 'vip_assignment',
+                        amount: 0,
+                        description: `Assigned ${vipLevel} VIP status`,
+                        created_at: new Date().toISOString()
+                    });
+                
+                closeVipModal();
+                showToast(`${vipLevel} VIP status assigned successfully!`);
+                
+                // Refresh data
+                await loadUsers();
+                await loadVipUsers();
+                await loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error assigning VIP:', error);
+                showToast('Error assigning VIP: ' + error.message, 'error');
+            } finally {
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        };
+
+        // ✅ ALL TRANSACTIONS
+        window.loadAllTransactions = async function() {
+            try {
+                const dateFilter = document.getElementById('transactionDateFilter').value;
+                const typeFilter = document.getElementById('transactionTypeFilter').value;
+                
+                let query = supabaseAdmin
+                    .from('transactions')
+                    .select('*, users(name)')
+                    .order('created_at', { ascending: false })
+                    .limit(100);
+                
+                if (dateFilter) {
+                    const startDate = new Date(dateFilter);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 1);
+                    
+                    query = query.gte('created_at', startDate.toISOString())
+                                .lt('created_at', endDate.toISOString());
+                }
+                
+                if (typeFilter !== 'all') {
+                    query = query.eq('type', typeFilter);
+                }
+                
+                const { data: transactions } = await query;
+                
+                const container = document.getElementById('transactionsTable');
+                
+                if (!transactions || transactions.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No transactions found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                transactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    
+                    let typeBadge = '';
+                    switch(tx.type) {
+                        case 'mining':
+                            typeBadge = '<span class="status-badge status-approved">Mining</span>';
+                            break;
+                        case 'deposit':
+                            typeBadge = '<span class="status-badge status-success">Deposit</span>';
+                            break;
+                        case 'withdrawal':
+                            typeBadge = '<span class="status-badge status-warning">Withdrawal</span>';
+                            break;
+                        case 'referral':
+                            typeBadge = '<span class="status-badge status-info">Referral</span>';
+                            break;
+                        case 'vip_assignment':
+                            typeBadge = '<span class="vip-badge vip-gold">VIP</span>';
+                            break;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${tx.id.substring(0, 8)}...</td>
+                        <td>${tx.users?.name || tx.user_id}</td>
+                        <td>${typeBadge}</td>
+                        <td>$${parseFloat(tx.amount || 0).toFixed(2)}</td>
+                        <td>${tx.description || 'No description'}</td>
+                        <td>${new Date(tx.created_at).toLocaleString()}</td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        };
+
+        window.filterTransactionsByDate = function() {
+            loadAllTransactions();
+        };
+
+        window.filterTransactionsByType = function() {
+            loadAllTransactions();
+        };
+
+        // ✅ MINING SESSIONS
+        async function loadMiningSessions() {
+            try {
+                const { data: sessions } = await supabaseAdmin
+                    .from('mining_sessions')
+                    .select('*, users(name, email), mining_plans(name)')
+                    .order('created_at', { ascending: false });
+                
+                const container = document.getElementById('miningSessionsTable');
+                
+                if (!sessions || sessions.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No mining sessions found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                sessions.forEach(session => {
+                    const row = document.createElement('tr');
+                    
+                    // Calculate progress
+                    const startTime = new Date(session.start_time);
+                    const nextPayout = new Date(session.next_payout_time);
+                    const now = new Date();
+                    const totalTime = 24 * 60 * 60 * 1000; // 24 hours in ms
+                    const elapsed = now - startTime;
+                    const progress = Math.min(100, (elapsed / totalTime) * 100);
+                    
+                    const statusBadge = session.is_active ? 
+                        `<span class="status-badge status-active">Active</span>` :
+                        `<span class="status-badge status-inactive">Inactive</span>`;
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div style="font-weight: 500;">${session.users?.name || session.user_id}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${session.user_id}</div>
+                        </td>
+                        <td>${session.mining_plans?.name || 'N/A'}</td>
+                        <td>$${parseFloat(session.daily_earnings).toFixed(2)}</td>
+                        <td>${session.current_day}/${session.total_days}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 60px; height: 4px; background: var(--bg-secondary); border-radius: 2px; overflow: hidden;">
+                                    <div style="width: ${progress}%; height: 100%; background: var(--accent);"></div>
+                                </div>
+                                <span>${progress.toFixed(1)}%</span>
+                            </div>
+                        </td>
+                        <td>${session.next_payout_time ? new Date(session.next_payout_time).toLocaleString() : 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-view" onclick="viewMiningSession('${session.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                ${session.is_active ? `
+                                    <button class="action-btn action-delete" onclick="stopMiningSession('${session.id}')">
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading mining sessions:', error);
+            }
+        }
+
+        // ✅ SETTINGS Management
+        async function loadSettings() {
+            try {
+                // Load settings from database or use defaults
+                const { data: settings } = await supabaseAdmin
+                    .from('settings')
+                    .select('*')
+                    .single();
+                
+                if (settings) {
+                    document.getElementById('siteName').value = settings.site_name || 'CryptoMine';
+                    document.getElementById('minDeposit').value = settings.min_deposit || 50;
+                    document.getElementById('minWithdrawal').value = settings.min_withdrawal || 20;
+                    document.getElementById('withdrawalFee').value = settings.withdrawal_fee || 2;
+                    document.getElementById('referralCommission').value = settings.referral_commission || 10;
+                    document.getElementById('goldVipReq').value = settings.gold_vip_requirement || 10000;
+                    document.getElementById('silverVipReq').value = settings.silver_vip_requirement || 5000;
+                    document.getElementById('bronzeVipReq').value = settings.bronze_vip_requirement || 1000;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const settingsData = {
+                    site_name: document.getElementById('siteName').value,
+                    min_deposit: parseFloat(document.getElementById('minDeposit').value),
+                    min_withdrawal: parseFloat(document.getElementById('minWithdrawal').value),
+                    withdrawal_fee: parseFloat(document.getElementById('withdrawalFee').value),
+                    referral_commission: parseFloat(document.getElementById('referralCommission').value),
+                    gold_vip_requirement: parseFloat(document.getElementById('goldVipReq').value),
+                    silver_vip_requirement: parseFloat(document.getElementById('silverVipReq').value),
+                    bronze_vip_requirement: parseFloat(document.getElementById('bronzeVipReq').value),
+                    updated_at: new Date().toISOString()
+                };
+                
+                // Check if settings exist
+                const { data: existingSettings } = await supabaseAdmin
+                    .from('settings')
+                    .select('id')
+                    .single();
+                
+                if (existingSettings) {
+                    await supabaseAdmin
+                        .from('settings')
+                        .update(settingsData)
+                        .eq('id', existingSettings.id);
+                } else {
+                    await supabaseAdmin
+                        .from('settings')
+                        .insert(settingsData);
+                }
+                
+                showToast('Settings saved successfully!');
+                
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showToast('Error saving settings: ' + error.message, 'error');
+            }
+        }
+
+        // ✅ ACTION MODAL for Approve/Reject
+        window.showActionModal = function(type, id, userId, amount, action) {
+            currentItemType = type;
+            currentItemId = id;
+            currentAction = action;
+            currentItemData = { userId, amount };
+            
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('actionModalTitle');
+            
+            title.textContent = action === 'approve' ? 
+                `Approve ${type.replace('_', ' ')}` : 
+                `Reject ${type.replace('_', ' ')}`;
+            
+            document.getElementById('actionItemId').value = id;
+            document.getElementById('actionUser').value = userId;
+            document.getElementById('actionAmount').value = '$' + parseFloat(amount).toFixed(2);
+            document.getElementById('actionType').value = type.replace('_', ' ');
+            
+            modal.classList.add('active');
+        };
+
+        window.closeActionModal = function() {
+            document.getElementById('actionModal').classList.remove('active');
+            document.getElementById('adminNotes').value = '';
+            currentItemType = null;
+            currentItemId = null;
+            currentItemData = null;
+            currentAction = null;
+        };
+
+       window.confirmAction = async function(action) {
+    const notes = document.getElementById('adminNotes').value.trim();
+    
+    try {
+        const updateData = {
+            status: action === 'approve' ? 'approved' : 'rejected',
+            admin_notes: notes || null,
+            approved_at: new Date().toISOString(),
+            approved_by: adminUser.email
+        };
+        
+        let tableName = '';
+        let userEmail = currentItemData.userId;
+        let amount = parseFloat(currentItemData.amount);
+        
+        // Update request status
+        if (currentItemType === 'deposit') {
+            tableName = 'deposit_requests';
+            
+            // Get deposit details
+            const { data: deposit } = await supabaseAdmin
+                .from('deposit_requests')
+                .select('*')
+                .eq('id', currentItemId)
+                .single();
+            
+            if (action === 'approve') {
+                // ✅ BALANCE ADD NA KAREIN - Mining directly start hogi
+                
+                // ✅ Referral commission dena agar referral hai
+                if (deposit && deposit.referred_by) {
+                    // Find referrer
+                    const { data: referrer } = await supabaseAdmin
+                        .from('users')
+                        .select('*')
+                        .eq('referral_code', deposit.referred_by)
+                        .single();
+                    
+                    if (referrer) {
+                        // Calculate commission (10% of deposit amount)
+                        const commission = amount * 0.10;
+                        
+                        // Add commission to referrer's balance
+                        const newReferrerBalance = (parseFloat(referrer.balance) || 0) + commission;
+                        const newReferralEarnings = (parseFloat(referrer.referral_earnings) || 0) + commission;
+                        
+                        await supabaseAdmin
+                            .from('users')
+                            .update({ 
+                                balance: newReferrerBalance,
+                                referral_earnings: newReferralEarnings
+                            })
+                            .eq('email', referrer.email);
+                        
+                        // Add commission transaction
+                        await supabaseAdmin
+                            .from('transactions')
+                            .insert({
+                                user_id: referrer.email,
+                                type: 'referral',
+                                amount: commission,
+                                description: `Referral commission from ${userEmail}'s deposit`,
+                                created_at: new Date().toISOString()
+                            });
+                    }
+                }
+                
+                // Add transaction record (without balance addition)
+                await supabaseAdmin
+                    .from('transactions')
+                    .insert({
+                        user_id: userEmail,
+                        type: 'deposit',
+                        amount: amount,
+                        description: `USDT Deposit for mining plan`,
+                        created_at: new Date().toISOString()
+                    });
+                
+                // If deposit includes plan purchase, create mining session
+                if (deposit && deposit.plan_id) {
+                    await approvePlanPurchase(currentItemId);
+                }
+            }
+        } else if (currentItemType === 'withdrawal') {
+            tableName = 'withdrawal_requests';
+            
+            if (action === 'approve') {
+                // ✅ BALANCE ALREADY DEDUCTED IN USER SIDE, ONLY ADD TRANSACTION RECORD
+                const fee = amount * 0.02; // 2% fee
+                const netAmount = amount - fee;
+                
+                // Add transaction record
+                await supabaseAdmin
+                    .from('transactions')
+                    .insert({
+                        user_id: userEmail,
+                        type: 'withdrawal',
+                        amount: netAmount,
+                        description: `USDT Withdrawal Approved (Fee: $${fee.toFixed(2)})`,
+                        created_at: new Date().toISOString()
+                    });
+                
+                // ✅ NO NEED TO DEDUCT BALANCE AGAIN - IT'S ALREADY DONE
+                
+            } else if (action === 'reject') {
+                // ✅ REFUND BALANCE BACK TO USER
+                const { data: user } = await supabaseAdmin
+                    .from('users')
+                    .select('balance')
+                    .eq('email', userEmail)
+                    .single();
+                
+                const newBalance = (parseFloat(user.balance) || 0) + amount;
+                
+                await supabaseAdmin
+                    .from('users')
+                    .update({ balance: newBalance })
+                    .eq('email', userEmail);
+                
+                // Add refund transaction record
+                await supabaseAdmin
+                    .from('transactions')
+                    .insert({
+                        user_id: userEmail,
+                        type: 'withdrawal_refund',
+                        amount: amount,
+                        description: `Withdrawal request rejected - Amount refunded`,
+                        created_at: new Date().toISOString()
+                    });
+            }
+        }
+        
+        // ✅ IMPORTANT: Update request status in database
+        await supabaseAdmin
+            .from(tableName)
+            .update(updateData)
+            .eq('id', currentItemId);
+        
+        // Show success message
+        showToast(`${currentItemType.replace('_', ' ')} ${action === 'approve' ? 'approved' : 'rejected'} successfully!`);
+        
+        // Close modal and refresh data
+        closeActionModal();
+        
+        // Refresh relevant tables
+        switch(currentItemType) {
+            case 'deposit':
+                await loadDepositRequests();
+                await loadPlanPurchases();
+                break;
+            case 'withdrawal':
+                await loadWithdrawalRequests();
+                break;
+        }
+        
+        // Update dashboard stats
+        await loadDashboardStats();
+        await loadPendingCounts();
+        
+        // Show real-time notification
+        const actionText = action === 'approve' ? 'approved' : 'rejected';
+        showRealTimeNotification(
+            `Request ${actionText}`,
+            `${userEmail}'s ${currentItemType} request has been ${actionText}`
+        );
+        
+    } catch (error) {
+        console.error('Error processing action:', error);
+        showToast('Error processing request: ' + error.message, 'error');
+    }
+};
+        // ✅ APPROVE PLAN PURCHASE Function
+        async function approvePlanPurchase(depositId) {
+            try {
+                const { data: deposit } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('*')
+                    .eq('id', depositId)
+                    .single();
+                
+                if (!deposit || !deposit.plan_id) return;
+                
+                const userEmail = deposit.user_id;
+                const planPrice = parseFloat(deposit.amount);
+                
+                // Get user info
+              // Get user info (balance nahi chahiye)
+const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('active_plans, vip_level')
+    .eq('email', userEmail)
+    .single();
+
+// Calculate daily earnings with VIP bonus
+const baseDailyReturn = parseFloat(deposit.daily_return);
+let vipBonus = 0;
+
+if (user.vip_level === 'gold') vipBonus = 2;
+else if (user.vip_level === 'silver') vipBonus = 1;
+else if (user.vip_level === 'bronze') vipBonus = 0.5;
+
+const totalDailyReturn = baseDailyReturn + vipBonus;
+const dailyEarnings = planPrice * (totalDailyReturn / 100);
+                
+                // Create mining session
+                const nextPayoutTime = new Date();
+                nextPayoutTime.setHours(nextPayoutTime.getHours() + 24);
+                
+                const miningSessionData = {
+                    user_id: userEmail,
+                    plan_id: deposit.plan_id,
+                    is_active: true,
+                    start_time: new Date().toISOString(),
+                    next_payout_time: nextPayoutTime.toISOString(),
+                    daily_earnings: dailyEarnings,
+                    current_day: 1,
+                    total_days: deposit.duration,
+                    created_at: new Date().toISOString()
+                };
+                
+                // Check if mining session exists
+                const { data: existingSession } = await supabaseAdmin
+                    .from('mining_sessions')
+                    .select('id')
+                    .eq('user_id', userEmail)
+                    .single();
+                
+                if (existingSession) {
+                    // Update existing session
+                    await supabaseAdmin
+                        .from('mining_sessions')
+                        .update(miningSessionData)
+                        .eq('user_id', userEmail);
+                } else {
+                    // Insert new session
+                    await supabaseAdmin
+                        .from('mining_sessions')
+                        .insert(miningSessionData);
+                }
+                
+                // Update user active plans count
+                const newActivePlans = (parseInt(user.active_plans) || 0) + 1;
+                
+                await supabaseAdmin
+                    .from('users')
+                    .update({ 
+                        active_plans: newActivePlans
+                    })
+                    .eq('email', userEmail);
+                
+                // Add plan purchase transaction
+                await supabaseAdmin
+                    .from('transactions')
+                    .insert({
+                        user_id: userEmail,
+                        type: 'plan_purchase',
+                        amount: planPrice,
+                        description: `Purchased ${deposit.plan_name} plan (${deposit.duration} days)`,
+                        created_at: new Date().toISOString()
+                    });
+                
+                showRealTimeNotification(
+                    'Mining Started',
+                    `${userEmail}'s mining plan has started. Daily earnings: $${dailyEarnings.toFixed(2)}`
+                );
+                
+            } catch (error) {
+                console.error('Error approving plan purchase:', error);
+                showToast('Error starting mining: ' + error.message, 'error');
+            }
+        }
+
+        // ✅ CHECK VIP REQUIREMENTS
+        async function checkVipRequirements(userEmail) {
+            try {
+                // Get user's total deposits
+                const { data: deposits } = await supabaseAdmin
+                    .from('deposit_requests')
+                    .select('amount')
+                    .eq('user_id', userEmail)
+                    .eq('status', 'approved');
+                
+                const totalDeposits = deposits ? deposits.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0) : 0;
+                
+                // Get current VIP level
+                const { data: user } = await supabaseAdmin
+                    .from('users')
+                    .select('vip_level')
+                    .eq('email', userEmail)
+                    .single();
+                
+                let newVipLevel = user.vip_level || 'none';
+                
+                // Check VIP requirements
+                if (totalDeposits >= 10000) {
+                    newVipLevel = 'gold';
+                } else if (totalDeposits >= 5000) {
+                    newVipLevel = 'silver';
+                } else if (totalDeposits >= 1000) {
+                    newVipLevel = 'bronze';
+                }
+                
+                // Update VIP level if changed
+                if (newVipLevel !== user.vip_level) {
+                    await supabaseAdmin
+                        .from('users')
+                        .update({
+                            vip_level: newVipLevel,
+                            vip_since: new Date().toISOString()
+                        })
+                        .eq('email', userEmail);
+                    
+                    // Add VIP upgrade transaction
+                    await supabaseAdmin
+                        .from('transactions')
+                        .insert({
+                            user_id: userEmail,
+                            type: 'vip_upgrade',
+                            amount: 0,
+                            description: `Upgraded to ${newVipLevel} VIP`,
+                            created_at: new Date().toISOString()
+                        });
+                    
+                    showRealTimeNotification(
+                        'VIP Upgrade',
+                        `${userEmail} has been upgraded to ${newVipLevel} VIP!`
+                    );
+                }
+                
+            } catch (error) {
+                console.error('Error checking VIP requirements:', error);
+            }
+        }
+
+        // ✅ User Management Functions
+        window.showUserModal = function(userEmail = null) {
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('userModalTitle');
+            
+            if (userEmail) {
+                title.textContent = 'Edit User';
+                currentItemId = userEmail;
+                loadUserData(userEmail);
+            } else {
+                title.textContent = 'Add New User';
+                currentItemId = null;
+                clearUserForm();
+            }
+            
+            modal.classList.add('active');
+        };
+
+        window.closeUserModal = function() {
+            document.getElementById('userModal').classList.remove('active');
+            currentItemId = null;
+        };
+
+        async function loadUserData(userEmail) {
+            try {
+                const { data: user } = await supabaseAdmin
+                    .from('users')
+                    .select('*')
+                    .eq('email', userEmail)
+                    .single();
+                
+                document.getElementById('userEmail').value = user.email;
+                document.getElementById('userName').value = user.name;
+                document.getElementById('userPassword').value = '';
+                document.getElementById('userBalance').value = user.balance || 0;
+                document.getElementById('userVipLevel').value = user.vip_level || 'none';
+                document.getElementById('userReferralCode').value = user.referral_code;
+                document.getElementById('userReferredBy').value = user.referred_by || '';
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('Error loading user data', 'error');
+            }
+        }
+
+        function clearUserForm() {
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userName').value = '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userBalance').value = 0;
+            document.getElementById('userVipLevel').value = 'none';
+            document.getElementById('userReferralCode').value = '';
+            document.getElementById('userReferredBy').value = '';
+        }
+
+        window.saveUser = async function() {
+            const email = document.getElementById('userEmail').value.trim();
+            const name = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value;
+            const balance = parseFloat(document.getElementById('userBalance').value) || 0;
+            const vipLevel = document.getElementById('userVipLevel').value;
+            const referralCode = document.getElementById('userReferralCode').value.trim();
+            const referredBy = document.getElementById('userReferredBy').value.trim();
+            
+            if (!email || !name || (!currentItemId && !password)) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const btnText = document.getElementById('saveUserText');
+            const spinner = document.getElementById('saveUserSpinner');
+            
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            
+            try {
+                const userData = {
+                    email: email,
+                    name: name,
+                    balance: balance,
+                    vip_level: vipLevel,
+                    referral_code: referralCode || generateReferralCode(),
+                    referred_by: referredBy || null
+                };
+                
+                if (currentItemId) {
+                    if (password) userData.password = password;
+                    await supabaseAdmin
+                        .from('users')
+                        .update(userData)
+                        .eq('email', currentItemId);
+                    showToast('User updated successfully!');
+                } else {
+                    userData.password = password;
+                    userData.active_plans = 0;
+                    userData.referrals = 0;
+                    userData.referral_earnings = 0;
+                    await supabaseAdmin
+                        .from('users')
+                        .insert(userData);
+                    showToast('User added successfully!');
+                }
+                
+                closeUserModal();
+                await loadUsers();
+                await loadVipUsers();
+                await loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showToast('Error saving user: ' + error.message, 'error');
+            } finally {
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        };
+
+        window.editUser = function(userEmail) {
+            showUserModal(userEmail);
+        };
+
+        // ✅ Mining Session Functions
+        async function stopMiningSession(sessionId) {
+            if (!confirm('Are you sure you want to stop this mining session?')) return;
+            
+            try {
+                await supabaseAdmin
+                    .from('mining_sessions')
+                    .update({ is_active: false })
+                    .eq('id', sessionId);
+                
+                showToast('Mining session stopped successfully!');
+                await loadMiningSessions();
+                
+            } catch (error) {
+                console.error('Error stopping mining session:', error);
+                showToast('Error stopping mining session', 'error');
+            }
+        }
+
+        // ✅ Utility Functions
+        function generateReferralCode() {
+            return 'CM' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Copied to clipboard!');
+        }
+
+        // ✅ EXPORT FUNCTIONS
+        window.exportUsers = function() {
+            const users = allUsersCache;
+            if (!users.length) {
+                showToast('No users to export', 'error');
+                return;
+            }
+            
+            let csv = 'Email,Name,Balance,VIP Level,Active Plans,Total Earnings,Joined Date,Status\n';
+            
+            users.forEach(user => {
+                const status = parseInt(user.active_plans) > 0 ? 'Active' : 'Inactive';
+                const vipLevel = user.vip_level && user.vip_level !== 'none' ? user.vip_level.toUpperCase() : 'None';
+                
+                csv += `"${user.email}","${user.name}",${user.balance || 0},"${vipLevel}",${user.active_plans || 0},${user.total_earnings || 0},"${new Date(user.created_at).toLocaleDateString()}","${status}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Users exported successfully!');
+        };
+
+        // ✅ Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = toast.querySelector('.toast-icon');
+            
+            toastMessage.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            if (type === 'error') {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            }
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Make functions global
+        window.editPlan = function(planId) {
+            showPlanModal(planId);
+        };
+
+        // Initialize
+        async function initializeAdminPanel() {
+            if (adminUser) {
+                showAdminPanel();
+                await loadDashboardStats();
+                await loadPlans();
+                await loadPendingCounts();
+                await startRealTimeUpdates();
+            }
+        }
+
+    </script>
+</body>
+</html>
