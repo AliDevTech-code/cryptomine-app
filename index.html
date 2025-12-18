@@ -242,7 +242,35 @@
             z-index: 100;
             transition: transform 0.3s ease;
         }
+/* ✅ पूरे पेज की scrollbar को customize करें */
+html {
+    scrollbar-width: thin; /* Firefox के लिए पतला */
+    scrollbar-color: rgba(45, 212, 191, 0.3) rgba(10, 15, 26, 0.1); /* thumb और track का color */
+}
 
+/* Chrome, Safari, Edge के लिए */
+::-webkit-scrollbar {
+    width: 8px; /* पतला width */
+    height: 8px; /* horizontal scrollbar के लिए */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(10, 15, 26, 0.1); /* dark background */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(45, 212, 191, 0.4); /* teal/accent color */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(45, 212, 191, 0.6); /* hover पर bright */
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent; /* bottom-right corner */
+}
         .sidebar.hidden {
             transform: translateX(-100%);
         }
@@ -3419,3 +3447,4 @@ window.showPage = function(pageId) {
     </script>
 </body>
 </html>
+
